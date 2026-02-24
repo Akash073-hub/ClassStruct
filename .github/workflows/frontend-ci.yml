@@ -4,12 +4,12 @@ on:
     branches: [main, develop]
     paths:
       - 'Frontend/**'
-      - '.github/workflows/Frontend-ci.yml'
+      - '.github/workflows/frontend-ci.yml'
   pull_request:
     branches: [main, develop]
     paths:
       - 'Frontend/**'
-      - '.github/workflows/Frontend-ci.yml'
+      - '.github/workflows/frontend-ci.yml'
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
