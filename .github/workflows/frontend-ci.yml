@@ -3,12 +3,12 @@ on:
   push:
     branches: [main, develop]
     paths:
-      - 'frontend/**'
+      - 'Frontend/**'
       - '.github/workflows/Frontend-ci.yml'
   pull_request:
     branches: [main, develop]
     paths:
-      - 'frontend/**'
+      - 'Frontend/**'
       - '.github/workflows/Frontend-ci.yml'
 jobs:
   lint-and-test:
