@@ -1,328 +1,488 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   TextInput,
   TouchableOpacity,
+  StyleSheet,
   StatusBar,
-  SafeAreaView,
-  Alert,
-} from "react-native";
+  Animated,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Dimensions,
+  Image,
+} from 'react-native';
 
-import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
+const { width, height } = Dimensions.get('window');
 
-export default function LoginScreen({ navigation }: { navigation: any }) {
-  const [focusedInput, setFocusedInput] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+// ---------- SVG-free icon replacements using text/emoji ----------
+const IconAt = () => <Text style={styles.inputIcon}>@</Text>;
+const IconEye = ({ show }: { show: boolean }) => (
+  <Text style={styles.inputIcon}>{show ? '🙈' : '👁'}</Text>
+);
+const IconGoogle = () => (
+  <View style={styles.socialIconCircle}>
+    <Text style={styles.socialIconText}>G</Text>
+  </View>
+);
+const IconApple = () => (
+  <View style={[styles.socialIconCircle, { backgroundColor: '#000' }]}>
+    <Text style={[styles.socialIconText, { color: '#fff' }]}>🍎</Text>
+  </View>
+);
+const IconFacebook = () => (
+  <View style={[styles.socialIconCircle, { backgroundColor: '#1877F2' }]}>
+    <Text style={[styles.socialIconText, { color: '#fff' }]}>f</Text>
+  </View>
+);
+
+type LoginScreenProps = {
+  onLogin?: (
+    role: 'student' | 'teacher',
+    username: string,
+    password: string,
+  ) => void;
+  onCreateNew?: () => void;
+  onForgotPassword?: () => void;
+};
+
+export default function LoginScreen({
+  onLogin,
+  onCreateNew,
+  onForgotPassword,
+}: LoginScreenProps) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [role, setRole] = useState<'student' | 'teacher'>('student');
+
+  // Animations
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(40)).current;
+  const cardScale = useRef(new Animated.Value(0.95)).current;
 
   useEffect(() => {
-    GoogleSignin.configure({
-      webClientId: "YOUR_GOOGLE_WEB_CLIENT_ID",
-    });
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 700,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.spring(cardScale, {
+        toValue: 1,
+        friction: 7,
+        tension: 50,
+        useNativeDriver: true,
+      }),
+    ]).start();
   }, []);
 
   const handleLogin = () => {
-    if (!username || !password) {
-      Alert.alert("Error", "Please fill in all fields");
-      return;
-    }
-
-    Alert.alert("Success", `Login Successful\nUsername: ${username}`);
-    // ❌ Removed: navigation.navigate("Home");
-  };
-
-  // GOOGLE LOGIN - FIXED
-  const handleGoogleLogin = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-
-    } catch (error) {
-      console.log("Google Login Error:", error);
-      
-      // Check if user cancelled the sign-in
-      if (error && typeof error === 'object' && 'code' in error &&
-          (error as any).code === statusCodes.SIGN_IN_CANCELLED) {
-        Alert.alert("Login Failed", "You cancelled Google Sign-In. Please try again.");
-        return; // Don't navigate to Home
-      }
-      
-      // Other errors
-      Alert.alert("Login Failed", "Google Sign-In failed. Please try again.");
-      return; // Don't navigate to Home
-    }
-  };
-
-  // LINKEDIN LOGIN
-  const handleLinkedInLogin = async () => {
-    try {
-      Alert.alert(
-        "LinkedIn Login",
-        `LinkedIn Sign-In would open here!\n\nUsername: ${username || 'Not entered'}\nPassword: ${password ? '••••••••' : 'Not entered'}`
-      );
-      // ❌ Removed: navigation.navigate("Home");
-    } catch (error) {
-      console.log("LinkedIn Login Error:", error);
-      Alert.alert("Login Failed", "LinkedIn Sign-In failed. Please try again.");
-    }
-  };
-
-  const handleSkip = () => {
-    if (navigation?.goBack) {
-      navigation.goBack();
-    } else {
-      Alert.alert("Info", "No previous screen to go back to");
-    }
+    onLogin?.(role, username, password);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" />
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <StatusBar barStyle="light-content" backgroundColor="#3DBFAB" />
 
-      <View style={styles.card}>
-        <Text style={styles.title}>
-          Hey,{"\n"}Login Now.
-        </Text>
+      {/* Teal background with decorative blobs */}
+      <View style={styles.background}>
+        <View style={styles.blobTopLeft} />
+        <View style={styles.blobBottomRight} />
+      </View>
 
-        <Text style={styles.subtitle}>
-          If you are new /{" "}
-          <Text style={styles.linkText}>Create New</Text>
-        </Text>
-
-        {/* Username */}
-        <View
+      <ScrollView
+        contentContainerStyle={styles.scroll}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Role Toggle — Student / Teacher */}
+        <Animated.View
           style={[
-            styles.inputBox,
-            focusedInput === "user" && styles.activeInput,
+            styles.roleToggleContainer,
+            { opacity: fadeAnim, transform: [{ translateY: slideAnim }] },
           ]}
         >
-          <TextInput
-            style={styles.input}
-            placeholder="Username"
-            placeholderTextColor="#999"
-            value={username}
-            onChangeText={setUsername}
-            onFocus={() => setFocusedInput("user")}
-            onBlur={() => setFocusedInput("")}
-          />
-        </View>
-
-        {/* Password */}
-        <View
-          style={[
-            styles.inputBox,
-            focusedInput === "pass" && styles.activeInput,
-          ]}
-        >
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor="#999"
-            secureTextEntry={!showPassword}
-            value={password}
-            onChangeText={setPassword}
-            onFocus={() => setFocusedInput("pass")}
-            onBlur={() => setFocusedInput("")}
-          />
-
           <TouchableOpacity
-            onPress={() => setShowPassword(!showPassword)}
+            style={[styles.roleBtn, role === 'student' && styles.roleBtnActive]}
+            onPress={() => setRole('student')}
+            activeOpacity={0.8}
           >
-            <Text style={styles.eyeIcon}>
-              {showPassword ? "👁️" : "👁️‍🗨️"}
+            <Text
+              style={[
+                styles.roleBtnText,
+                role === 'student' && styles.roleBtnTextActive,
+              ]}
+            >
+              Student
             </Text>
           </TouchableOpacity>
-        </View>
-
-        {/* Forgot Password */}
-        <TouchableOpacity style={styles.forgotRow}>
-          <Text style={styles.forgotText}>Forgot Passcode?</Text>
-        </TouchableOpacity>
-
-        {/* Login Button */}
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={handleLogin}
-        >
-          <Text style={styles.loginText}>Login</Text>
-        </TouchableOpacity>
-
-        {/* Divider */}
-        <View style={styles.dividerRow}>
-          <View style={styles.line} />
-          <Text style={styles.or}>or</Text>
-          <View style={styles.line} />
-        </View>
-
-        {/* Social Login */}
-        <View style={styles.socialRow}>
           <TouchableOpacity
-            style={styles.socialButton}
-            onPress={handleGoogleLogin}
+            style={[styles.roleBtn, role === 'teacher' && styles.roleBtnActive]}
+            onPress={() => setRole('teacher')}
+            activeOpacity={0.8}
           >
-            <Text style={styles.socialIcon}>G</Text>
+            <Text
+              style={[
+                styles.roleBtnText,
+                role === 'teacher' && styles.roleBtnTextActive,
+              ]}
+            >
+              Teacher
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
+
+        {/* Card */}
+        <Animated.View
+          style={[
+            styles.card,
+            {
+              opacity: fadeAnim,
+              transform: [{ scale: cardScale }, { translateY: slideAnim }],
+            },
+          ]}
+        >
+          {/* Play-button accent (matches design) */}
+          <View style={styles.playButton}>
+            <Text style={styles.playIcon}>▶</Text>
+          </View>
+
+          {/* Heading */}
+          <Text style={styles.heading}>Hey,</Text>
+          <Text style={styles.headingBold}>Login Now.</Text>
+          <Text style={styles.subHeading}>
+            If you are new /{' '}
+            <Text style={styles.createLink} onPress={onCreateNew}>
+              Create New
+            </Text>
+          </Text>
+
+          {/* Username */}
+          <View style={styles.inputWrapper}>
+            <TextInput
+              style={styles.input}
+              placeholder="Username"
+              placeholderTextColor="#aaa"
+              value={username}
+              onChangeText={setUsername}
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
+            <IconAt />
+          </View>
+
+          {/* Password */}
+          <View style={styles.inputWrapper}>
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              placeholderTextColor="#aaa"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!showPassword}
+            />
+            <TouchableOpacity
+              onPress={() => setShowPassword(p => !p)}
+              activeOpacity={0.7}
+            >
+              <IconEye show={showPassword} />
+            </TouchableOpacity>
+          </View>
+
+          {/* Forgot */}
+          <View style={styles.forgotRow}>
+            <Text style={styles.forgotText}>Forgot Passcode? / </Text>
+            <TouchableOpacity onPress={onForgotPassword} activeOpacity={0.7}>
+              <Text style={styles.forgotReset}>Reset</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Login Button */}
+          <TouchableOpacity
+            style={styles.loginBtn}
+            onPress={handleLogin}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.loginBtnText}>Login</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.socialButton}
-            onPress={handleLinkedInLogin}
-          >
-            <Text style={styles.socialIcon}>in</Text>
-          </TouchableOpacity>
-        </View>
+          {/* Divider */}
+          <View style={styles.dividerRow}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>or</Text>
+            <View style={styles.dividerLine} />
+          </View>
 
-        <TouchableOpacity
-          onPress={handleSkip}
-        >
-          <Text style={styles.skip}>Skip Now</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+          {/* Social Buttons */}
+          <View style={styles.socialRow}>
+            <TouchableOpacity activeOpacity={0.8}>
+              <IconGoogle />
+            </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.8}>
+              <IconApple />
+            </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.8}>
+              <IconFacebook />
+            </TouchableOpacity>
+          </View>
+
+          {/* Skip */}
+          <TouchableOpacity activeOpacity={0.7} style={styles.skipRow}>
+            <Text style={styles.skipText}>Skip Now</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
+
+// ─────────────────────────── STYLES ───────────────────────────
+const TEAL = '#3DBFAB';
+const TEAL_DARK = '#2ea898';
+const CARD_BG = '#F5F5F0';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#8BBDB3",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: TEAL,
   },
-
-  card: {
-    width: "90%",
-    backgroundColor: "#fff",
-    borderRadius: 35,
-    padding: 30,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.2,
-    shadowRadius: 20,
-    elevation: 10,
+  background: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: TEAL,
+    overflow: 'hidden',
   },
-
-  title: {
-    fontSize: 28,
-    fontWeight: "800",
-    marginBottom: 10,
-    color: "#222",
+  blobTopLeft: {
+    position: 'absolute',
+    top: -80,
+    left: -80,
+    width: 260,
+    height: 260,
+    borderRadius: 130,
+    backgroundColor: 'rgba(255,255,255,0.10)',
   },
-
-  subtitle: {
-    color: "#777",
-    marginBottom: 25,
-    fontSize: 14,
+  blobBottomRight: {
+    position: 'absolute',
+    bottom: 60,
+    right: -60,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: 'rgba(255,255,255,0.08)',
   },
-
-  linkText: {
-    fontWeight: "600",
-    color: "#1e2235",
-  },
-
-  inputBox: {
-    backgroundColor: "#F5F5F5",
-    borderRadius: 15,
+  scroll: {
+    flexGrow: 1,
+    alignItems: 'center',
+    paddingVertical: 48,
     paddingHorizontal: 20,
-    paddingVertical: 15,
-    marginBottom: 15,
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "transparent",
   },
 
-  activeInput: {
-    borderWidth: 2,
-    borderColor: "#8BBDB3",
-    backgroundColor: "#fff",
+  // Role Toggle
+  roleToggleContainer: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255,255,255,0.20)',
+    borderRadius: 30,
+    padding: 4,
+    marginBottom: 28,
+    width: width * 0.72,
+  },
+  roleBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 26,
+    alignItems: 'center',
+  },
+  roleBtnActive: {
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+  },
+  roleBtnText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: 'rgba(255,255,255,0.75)',
+    letterSpacing: 0.3,
+  },
+  roleBtnTextActive: {
+    color: TEAL_DARK,
   },
 
+  // Card
+  card: {
+    width: '100%',
+    maxWidth: 400,
+    backgroundColor: CARD_BG,
+    borderRadius: 28,
+    padding: 30,
+    shadowColor: '#000',
+    shadowOpacity: 0.18,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 12,
+  },
+  playButton: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: '#1a1a1a',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  playIcon: {
+    color: '#fff',
+    fontSize: 16,
+    marginLeft: 3,
+  },
+  heading: {
+    fontSize: 32,
+    fontWeight: '300',
+    color: '#1a1a1a',
+    letterSpacing: -0.5,
+  },
+  headingBold: {
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#1a1a1a',
+    letterSpacing: -1,
+    marginBottom: 10,
+  },
+  subHeading: {
+    fontSize: 13.5,
+    color: '#888',
+    marginBottom: 28,
+  },
+  createLink: {
+    color: '#1a1a1a',
+    fontWeight: '700',
+    textDecorationLine: 'underline',
+  },
+
+  // Inputs
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    marginBottom: 14,
+    height: 54,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
   input: {
     flex: 1,
-    fontSize: 16,
-    color: "#333",
+    fontSize: 15,
+    color: '#1a1a1a',
+    fontWeight: '400',
   },
-
-  eyeIcon: {
+  inputIcon: {
     fontSize: 18,
+    color: '#bbb',
+    paddingLeft: 6,
   },
 
+  // Forgot
   forgotRow: {
-    alignItems: "flex-end",
-    marginBottom: 25,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 22,
+    marginTop: 2,
   },
-
   forgotText: {
-    color: "#79B6AD",
-    fontWeight: "600",
-    fontSize: 14,
+    fontSize: 13,
+    color: '#888',
+  },
+  forgotReset: {
+    fontSize: 13,
+    color: '#1a1a1a',
+    fontWeight: '700',
   },
 
-  loginButton: {
-    backgroundColor: "#1e2235",
-    paddingVertical: 16,
-    borderRadius: 15,
-    alignItems: "center",
-    shadowColor: "#1e2235",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
+  // Login button
+  loginBtn: {
+    backgroundColor: TEAL,
+    borderRadius: 16,
+    height: 54,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 22,
+    shadowColor: TEAL,
+    shadowOpacity: 0.45,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 6,
   },
-
-  loginText: {
-    color: "#fff",
-    fontWeight: "700",
+  loginBtnText: {
+    color: '#fff',
     fontSize: 17,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
 
+  // Divider
   dividerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 25,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 18,
   },
-
-  line: {
+  dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: "#ddd",
+    backgroundColor: '#ddd',
   },
-
-  or: {
+  dividerText: {
     marginHorizontal: 10,
-    color: "#999",
-    fontSize: 14,
+    color: '#aaa',
+    fontSize: 13,
   },
 
+  // Social
   socialRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 20,
-    marginBottom: 25,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 16,
+    marginBottom: 18,
+  },
+  socialIconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#f0f0ec',
+    borderWidth: 1,
+    borderColor: '#e4e4e0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  socialIconText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#333',
   },
 
-  socialButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#f3f3f3",
-    justifyContent: "center",
-    alignItems: "center",
+  // Skip
+  skipRow: {
+    alignItems: 'center',
+    paddingTop: 4,
   },
-
-  socialIcon: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
-  },
-
-  skip: {
-    textAlign: "center",
-    color: "#888",
-    fontWeight: "600",
-    fontSize: 15,
+  skipText: {
+    fontSize: 13.5,
+    color: '#aaa',
+    letterSpacing: 0.2,
   },
 });
