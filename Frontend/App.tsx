@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import PreLoginScreen from './src/screens/auth/PreLogin';
-import LoginScreen from './src/screens/auth/Login';
+import LoginScreen from './src/screens/auth/login';
 import HomeScreen from './src/screens/home/Home';
 
 export type AuthStackParamList = {

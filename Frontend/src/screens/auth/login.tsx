@@ -38,8 +38,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   const handleGoogleLogin = async () => {
     try {
       await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-
+      await GoogleSignin.signIn();
     } catch (error) {
       console.log("Google Login Error:", error);
       
