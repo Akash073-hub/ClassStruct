@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   StatusBar,
+  SafeAreaView,
 } from "react-native";
 
 export default function PreLogin({ navigation }: { navigation?: any }) {
@@ -13,22 +14,19 @@ export default function PreLogin({ navigation }: { navigation?: any }) {
 
   const slides = [
     {
-      category: "DATA MANAGEMENT",
-      title: "Centralized Student Records",
-      description:
-        "Eliminate scattered data. Manage academic records, activities, and achievements in one secure system.",
+      category: "BCA APP",
+      title: "All student records, one place",
+      description: "Academics, activities, and achievements in one secure view.",
     },
     {
-      category: "ACADEMIC TRACKING",
-      title: "Your Complete Profile",
-      description:
-        "Access your grades, participation history, and achievements instantly without manual searching.",
+      category: "PROFILE",
+      title: "Track your progress instantly",
+      description: "See your results, participation, and history anytime.",
     },
     {
       category: "MENTORSHIP",
-      title: "Connect & Collaborate",
-      description:
-        "Bridge the gap between juniors and seniors for better guidance, mentorship, and academic support.",
+      title: "Learn with seniors",
+      description: "Connect juniors and seniors for guidance and collaboration.",
     },
   ];
 
@@ -41,10 +39,9 @@ export default function PreLogin({ navigation }: { navigation?: any }) {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      {/* Image Section */}
       <View style={styles.imageSection}>
         <Image
           source={{
@@ -52,26 +49,19 @@ export default function PreLogin({ navigation }: { navigation?: any }) {
           }}
           style={styles.backgroundImage}
         />
-
-        <View style={styles.highlightOverlay} />
-        <View style={styles.gradientBlur} />
+        <View style={styles.imageTint} />
+        <View style={styles.heroContent}>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{slides[activeIndex].category}</Text>
+          </View>
+          <Text style={styles.heroTitle}>ClassStruct</Text>
+        </View>
       </View>
 
-      {/* Card */}
       <View style={styles.cardContainer}>
         <View style={styles.card}>
-          <View style={styles.categoryContainer}>
-            <Text style={styles.category}>{slides[activeIndex].category}</Text>
-            <View style={styles.categoryLine} />
-          </View>
-
           <Text style={styles.title}>{slides[activeIndex].title}</Text>
-
-          <Text style={styles.description}>
-            {slides[activeIndex].description}
-          </Text>
-
-          {/* Dots */}
+          <Text style={styles.description}>{slides[activeIndex].description}</Text>
           <View style={styles.dots}>
             {slides.map((_, index) => (
               <TouchableOpacity
@@ -87,18 +77,14 @@ export default function PreLogin({ navigation }: { navigation?: any }) {
               </TouchableOpacity>
             ))}
           </View>
-
-          {/* Next Button */}
           <TouchableOpacity style={styles.nextBtn} onPress={handleNext}>
             <Text style={styles.nextText}>
-              {activeIndex === slides.length - 1 ? "Get Started" : "Next →"}
+              {activeIndex === slides.length - 1 ? "Get Started" : "Continue"}
             </Text>
           </TouchableOpacity>
-
-         
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -109,7 +95,7 @@ const styles = StyleSheet.create({
   },
 
   imageSection: {
-    flex: 1,
+    height: "56%",
     width: "100%",
     position: "relative",
   },
@@ -120,110 +106,117 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
 
-  highlightOverlay: {
+  imageTint: {
     position: "absolute",
-    top: "25%",
-    left: "8%",
-    right: "8%",
-    height: 180,
-    backgroundColor: "rgba(255,122,122,0.12)",
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: "rgba(255,122,122,0.25)",
+    top: 0,
+    right: 0,
+    left: 0,
+    bottom: 0,
+    backgroundColor: "rgba(30,34,53,0.28)",
   },
 
-  gradientBlur: {
+  heroContent: {
     position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 120,
-    backgroundColor: "rgba(139,189,179,0.95)",
+    top: 22,
+    left: 20,
+    right: 20,
+    gap: 12,
+  },
+
+  badge: {
+    alignSelf: "flex-start",
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.32)",
+  },
+
+  badgeText: {
+    color: "#fff",
+    fontSize: 11,
+    fontWeight: "700",
+    letterSpacing: 1.2,
+  },
+
+  heroTitle: {
+    fontSize: 32,
+    fontWeight: "800",
+    color: "#fff",
+    letterSpacing: 0.4,
   },
 
   cardContainer: {
     alignItems: "center",
-    paddingBottom: 40,
+    flex: 1,
+    paddingHorizontal: 16,
+    marginTop: -34,
   },
 
   card: {
-    width: "90%",
+    width: "100%",
     backgroundColor: "#fff",
-    borderRadius: 35,
-    padding: 35,
-    marginTop: -60,
+    borderRadius: 32,
+    paddingHorizontal: 24,
+    paddingTop: 30,
+    paddingBottom: 28,
     alignItems: "center",
-  },
-
-  categoryContainer: {
-    alignItems: "center",
-    marginBottom: 15,
-  },
-
-  category: {
-    color: "#ff7a7a",
-    fontWeight: "800",
-    fontSize: 12,
-    letterSpacing: 3,
-  },
-
-  categoryLine: {
-    width: 40,
-    height: 3,
-    backgroundColor: "#ff7a7a",
-    marginTop: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.16,
+    shadowRadius: 20,
+    elevation: 8,
   },
 
   title: {
-    fontSize: 26,
+    fontSize: 29,
     fontWeight: "800",
-    marginVertical: 10,
-    color: "#1a1a2e",
+    marginBottom: 10,
+    color: "#1e2235",
     textAlign: "center",
+    lineHeight: 36,
   },
 
   description: {
     fontSize: 15,
-    color: "#666",
-    lineHeight: 24,
-    marginBottom: 30,
+    color: "#5f6672",
+    lineHeight: 22,
+    marginBottom: 26,
     textAlign: "center",
+    paddingHorizontal: 6,
   },
 
   dots: {
     flexDirection: "row",
-    marginBottom: 30,
+    marginBottom: 24,
   },
 
   dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 8,
+    height: 8,
+    borderRadius: 999,
     backgroundColor: "#e0e0e0",
-    marginHorizontal: 6,
+    marginHorizontal: 5,
   },
 
   activeDot: {
-    width: 28,
+    width: 26,
     backgroundColor: "#ff7a7a",
   },
 
   nextBtn: {
     backgroundColor: "#1e2235",
-    paddingVertical: 16,
-    paddingHorizontal: 40,
-    borderRadius: 30,
-    marginBottom: 15,
+    paddingVertical: 15,
+    paddingHorizontal: 48,
+    borderRadius: 999,
+    minWidth: 180,
+    alignItems: "center",
   },
 
   nextText: {
     color: "#fff",
     fontWeight: "700",
-    fontSize: 17,
-  },
-
-  skip: {
-    color: "#888",
-    fontSize: 14,
+    fontSize: 16,
   },
 });

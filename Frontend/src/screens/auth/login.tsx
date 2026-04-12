@@ -60,7 +60,9 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
     try {
       Alert.alert(
         "LinkedIn Login",
-        `LinkedIn Sign-In would open here!\n\nUsername: ${username || 'Not entered'}\nPassword: ${password ? '••••••••' : 'Not entered'}`
+        `LinkedIn Sign-In would open here!\n\nUsername: ${
+          username || "Not entered"
+        }\nPassword: ${password ? "********" : "Not entered"}`
       );
       // ❌ Removed: navigation.navigate("Home");
     } catch (error) {
@@ -80,18 +82,13 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
+      <View style={styles.topGlow} />
+      <View style={styles.bottomGlow} />
 
       <View style={styles.card}>
-        <Text style={styles.title}>
-          Hey,{"\n"}Login Now.
-        </Text>
+        <Text style={styles.title}>Welcome back</Text>
+        <Text style={styles.subtitle}>Sign in to continue</Text>
 
-        <Text style={styles.subtitle}>
-          If you are new /{" "}
-          <Text style={styles.linkText}>Create New</Text>
-        </Text>
-
-        {/* Username */}
         <View
           style={[
             styles.inputBox,
@@ -109,7 +106,6 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
           />
         </View>
 
-        {/* Password */}
         <View
           style={[
             styles.inputBox,
@@ -127,41 +123,27 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
             onBlur={() => setFocusedInput("")}
           />
 
-          <TouchableOpacity
-            onPress={() => setShowPassword(!showPassword)}
-          >
-            <Text style={styles.eyeIcon}>
-              {showPassword ? "👁️" : "👁️‍🗨️"}
-            </Text>
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <Text style={styles.toggleText}>{showPassword ? "Hide" : "Show"}</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Forgot Password */}
         <TouchableOpacity style={styles.forgotRow}>
-          <Text style={styles.forgotText}>Forgot Passcode?</Text>
+          <Text style={styles.forgotText}>Forgot password?</Text>
         </TouchableOpacity>
 
-        {/* Login Button */}
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={handleLogin}
-        >
-          <Text style={styles.loginText}>Login</Text>
+        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+          <Text style={styles.loginText}>Sign In</Text>
         </TouchableOpacity>
 
-        {/* Divider */}
         <View style={styles.dividerRow}>
           <View style={styles.line} />
-          <Text style={styles.or}>or</Text>
+          <Text style={styles.or}>OR</Text>
           <View style={styles.line} />
         </View>
 
-        {/* Social Login */}
         <View style={styles.socialRow}>
-          <TouchableOpacity
-            style={styles.socialButton}
-            onPress={handleGoogleLogin}
-          >
+          <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
             <Text style={styles.socialIcon}>G</Text>
           </TouchableOpacity>
 
@@ -173,11 +155,13 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          onPress={handleSkip}
-        >
-          <Text style={styles.skip}>Skip Now</Text>
+        <TouchableOpacity onPress={handleSkip}>
+          <Text style={styles.skip}>Skip for now</Text>
         </TouchableOpacity>
+
+        <Text style={styles.registerText}>
+          New here? <Text style={styles.linkText}>Create account</Text>
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -189,52 +173,75 @@ const styles = StyleSheet.create({
     backgroundColor: "#8BBDB3",
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: 16,
+  },
+
+  topGlow: {
+    position: "absolute",
+    top: -42,
+    right: -32,
+    width: 180,
+    height: 180,
+    borderRadius: 999,
+    backgroundColor: "rgba(255,122,122,0.25)",
+  },
+
+  bottomGlow: {
+    position: "absolute",
+    bottom: -62,
+    left: -42,
+    width: 220,
+    height: 220,
+    borderRadius: 999,
+    backgroundColor: "rgba(255,255,255,0.15)",
   },
 
   card: {
-    width: "90%",
+    width: "100%",
+    maxWidth: 420,
     backgroundColor: "#fff",
-    borderRadius: 35,
-    padding: 30,
+    borderRadius: 30,
+    paddingHorizontal: 24,
+    paddingVertical: 28,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.2,
-    shadowRadius: 20,
-    elevation: 10,
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 8,
   },
 
   title: {
-    fontSize: 28,
+    fontSize: 30,
     fontWeight: "800",
-    marginBottom: 10,
-    color: "#222",
+    marginBottom: 6,
+    color: "#1e2235",
   },
 
   subtitle: {
-    color: "#777",
-    marginBottom: 25,
+    color: "#647082",
+    marginBottom: 22,
     fontSize: 14,
   },
 
   linkText: {
-    fontWeight: "600",
+    fontWeight: "700",
     color: "#1e2235",
   },
 
   inputBox: {
-    backgroundColor: "#F5F5F5",
-    borderRadius: 15,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    marginBottom: 15,
+    backgroundColor: "#f6f7f8",
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    marginBottom: 12,
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "transparent",
+    borderColor: "#ebeff2",
   },
 
   activeInput: {
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: "#8BBDB3",
     backgroundColor: "#fff",
   },
@@ -245,25 +252,28 @@ const styles = StyleSheet.create({
     color: "#333",
   },
 
-  eyeIcon: {
-    fontSize: 18,
+  toggleText: {
+    fontSize: 12,
+    color: "#6b7380",
+    fontWeight: "700",
+    letterSpacing: 0.4,
   },
 
   forgotRow: {
     alignItems: "flex-end",
-    marginBottom: 25,
+    marginBottom: 22,
   },
 
   forgotText: {
-    color: "#79B6AD",
+    color: "#79b6ad",
     fontWeight: "600",
-    fontSize: 14,
+    fontSize: 13,
   },
 
   loginButton: {
     backgroundColor: "#1e2235",
-    paddingVertical: 16,
-    borderRadius: 15,
+    paddingVertical: 15,
+    borderRadius: 14,
     alignItems: "center",
     shadowColor: "#1e2235",
     shadowOffset: { width: 0, height: 4 },
@@ -275,25 +285,28 @@ const styles = StyleSheet.create({
   loginText: {
     color: "#fff",
     fontWeight: "700",
-    fontSize: 17,
+    fontSize: 16,
+    letterSpacing: 0.4,
   },
 
   dividerRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 25,
+    marginVertical: 20,
   },
 
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: "#ddd",
+    backgroundColor: "#d9dee3",
   },
 
   or: {
     marginHorizontal: 10,
-    color: "#999",
-    fontSize: 14,
+    color: "#8b949e",
+    fontSize: 12,
+    fontWeight: "700",
+    letterSpacing: 1,
   },
 
   socialRow: {
@@ -304,12 +317,14 @@ const styles = StyleSheet.create({
   },
 
   socialButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#f3f3f3",
+    width: 52,
+    height: 52,
+    borderRadius: 999,
+    backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#e4e9ee",
   },
 
   socialIcon: {
@@ -322,6 +337,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#888",
     fontWeight: "600",
-    fontSize: 15,
+    fontSize: 14,
+  },
+
+  registerText: {
+    marginTop: 14,
+    textAlign: "center",
+    color: "#6b7380",
+    fontSize: 13,
   },
 });
