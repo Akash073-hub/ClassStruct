@@ -9,10 +9,38 @@ import {
   SafeAreaView,
   Alert,
 } from "react-native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { AuthStackParamList } from "../../../App";
 
 import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
 
-export default function LoginScreen({ navigation }: { navigation: any }) {
+type Props = {
+  navigation: NativeStackNavigationProp<AuthStackParamList, "Login">;
+};
+
+type DemoUser = {
+  username: string;
+  password: string;
+  role: "teacher" | "student";
+  name: string;
+};
+
+const DEMO_USERS: DemoUser[] = [
+  {
+    username: "teacher",
+    password: "teacher123",
+    role: "teacher",
+    name: "Dr. Mehta",
+  },
+  {
+    username: "student",
+    password: "student123",
+    role: "student",
+    name: "Aarav",
+  },
+];
+
+export default function LoginScreen({ navigation }: Props) {
   const [focusedInput, setFocusedInput] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -30,8 +58,33 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
       return;
     }
 
-    Alert.alert("Success", `Login Successful\nUsername: ${username}`);
-    // ❌ Removed: navigation.navigate("Home");
+    const normalizedUser = username.trim().toLowerCase();
+    const matchedUser = DEMO_USERS.find(
+      (user) =>
+        user.username === normalizedUser && user.password === password.trim()
+    );
+
+    if (!matchedUser) {
+      Alert.alert(
+        "Login Failed",
+        "Invalid credentials.\nUse teacher/teacher123 or student/student123"
+      );
+      return;
+    }
+
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: "Home",
+          params: {
+            role: matchedUser.role,
+            name: matchedUser.name,
+            username: matchedUser.username,
+          },
+        },
+      ],
+    });
   };
 
   // GOOGLE LOGIN - FIXED
@@ -86,8 +139,8 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
       <View style={styles.bottomGlow} />
 
       <View style={styles.card}>
-        <Text style={styles.title}>Welcome back</Text>
-        <Text style={styles.subtitle}>Sign in to continue</Text>
+        <Text style={styles.title}>Sign in</Text>
+        <Text style={styles.subtitle}>Student • Teacher</Text>
 
         <View
           style={[
@@ -158,10 +211,6 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
         <TouchableOpacity onPress={handleSkip}>
           <Text style={styles.skip}>Skip for now</Text>
         </TouchableOpacity>
-
-        <Text style={styles.registerText}>
-          New here? <Text style={styles.linkText}>Create account</Text>
-        </Text>
       </View>
     </SafeAreaView>
   );
@@ -211,21 +260,19 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 30,
+    fontSize: 34,
     fontWeight: "800",
     marginBottom: 6,
     color: "#1e2235",
+    letterSpacing: 0.2,
   },
 
   subtitle: {
     color: "#647082",
-    marginBottom: 22,
-    fontSize: 14,
-  },
-
-  linkText: {
-    fontWeight: "700",
-    color: "#1e2235",
+    marginBottom: 24,
+    fontSize: 13,
+    fontWeight: "600",
+    letterSpacing: 0.4,
   },
 
   inputBox: {
@@ -261,7 +308,7 @@ const styles = StyleSheet.create({
 
   forgotRow: {
     alignItems: "flex-end",
-    marginBottom: 22,
+    marginBottom: 18,
   },
 
   forgotText: {
@@ -272,7 +319,7 @@ const styles = StyleSheet.create({
 
   loginButton: {
     backgroundColor: "#1e2235",
-    paddingVertical: 15,
+    paddingVertical: 16,
     borderRadius: 14,
     alignItems: "center",
     shadowColor: "#1e2235",
@@ -292,7 +339,8 @@ const styles = StyleSheet.create({
   dividerRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 20,
+    marginTop: 18,
+    marginBottom: 18,
   },
 
   line: {
@@ -313,7 +361,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     gap: 20,
-    marginBottom: 25,
+    marginBottom: 20,
   },
 
   socialButton: {
@@ -337,13 +385,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#888",
     fontWeight: "600",
-    fontSize: 14,
-  },
-
-  registerText: {
-    marginTop: 14,
-    textAlign: "center",
-    color: "#6b7380",
     fontSize: 13,
   },
 });

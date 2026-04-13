@@ -15,18 +15,18 @@ export default function PreLogin({ navigation }: { navigation?: any }) {
   const slides = [
     {
       category: "BCA APP",
-      title: "All student records, one place",
-      description: "Academics, activities, and achievements in one secure view.",
+      title: "All records. One place.",
+      description: "Academics and activities in one secure app.",
     },
     {
       category: "PROFILE",
-      title: "Track your progress instantly",
-      description: "See your results, participation, and history anytime.",
+      title: "Track progress fast",
+      description: "Results, attendance, and history anytime.",
     },
     {
       category: "MENTORSHIP",
-      title: "Learn with seniors",
-      description: "Connect juniors and seniors for guidance and collaboration.",
+      title: "Connect juniors and seniors",
+      description: "One space for guidance and collaboration.",
     },
   ];
 
@@ -55,6 +55,7 @@ export default function PreLogin({ navigation }: { navigation?: any }) {
             <Text style={styles.badgeText}>{slides[activeIndex].category}</Text>
           </View>
           <Text style={styles.heroTitle}>ClassStruct</Text>
+          <Text style={styles.heroSubtitle}>BCA Student Platform</Text>
         </View>
       </View>
 
@@ -141,10 +142,17 @@ const styles = StyleSheet.create({
   },
 
   heroTitle: {
-    fontSize: 32,
+    fontSize: 34,
     fontWeight: "800",
     color: "#fff",
     letterSpacing: 0.4,
+  },
+
+  heroSubtitle: {
+    color: "rgba(255,255,255,0.9)",
+    fontSize: 14,
+    fontWeight: "600",
+    letterSpacing: 0.3,
   },
 
   cardContainer: {
@@ -170,18 +178,18 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 29,
+    fontSize: 30,
     fontWeight: "800",
     marginBottom: 10,
     color: "#1e2235",
     textAlign: "center",
-    lineHeight: 36,
+    lineHeight: 38,
   },
 
   description: {
-    fontSize: 15,
+    fontSize: 14,
     color: "#5f6672",
-    lineHeight: 22,
+    lineHeight: 21,
     marginBottom: 26,
     textAlign: "center",
     paddingHorizontal: 6,

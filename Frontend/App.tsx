@@ -10,7 +10,11 @@ import HomeScreen from './src/screens/home/Home';
 export type AuthStackParamList = {
   PreLogin: undefined;
   Login: undefined;
-  Home: undefined;
+  Home: {
+    role: 'teacher' | 'student';
+    name: string;
+    username: string;
+  };
 };
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
