@@ -8,163 +8,195 @@ import {
   StatusBar,
   SafeAreaView,
   Alert,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+  useWindowDimensions,
 } from "react-native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { AuthStackParamList } from "../../../App";
 
 import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
 
-type Props = {
-  navigation: NativeStackNavigationProp<AuthStackParamList, "Login">;
+// ─────────────────────────────────────────────
+// 🔑  PASTE YOUR GOOGLE WEB CLIENT ID BELOW
+//     Get it from: https://console.cloud.google.com
+//     → APIs & Services → Credentials → OAuth 2.0 Client IDs
+// ─────────────────────────────────────────────
+const GOOGLE_WEB_CLIENT_ID = "YOUR_GOOGLE_WEB_CLIENT_ID.apps.googleusercontent.com";
+
+type GoogleSigninError = {
+  code?: string;
 };
 
-type DemoUser = {
-  username: string;
-  password: string;
-  role: "teacher" | "student";
-  name: string;
-};
+export default function LoginScreen({ navigation }: { navigation: any }) {
+  const { width } = useWindowDimensions();
+  const isCompactDevice = width < 360;
 
-const DEMO_USERS: DemoUser[] = [
-  {
-    username: "teacher",
-    password: "teacher123",
-    role: "teacher",
-    name: "Dr. Mehta",
-  },
-  {
-    username: "student",
-    password: "student123",
-    role: "student",
-    name: "Aarav",
-  },
-];
-
-export default function LoginScreen({ navigation }: Props) {
   const [focusedInput, setFocusedInput] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     GoogleSignin.configure({
-      webClientId: "YOUR_GOOGLE_WEB_CLIENT_ID",
+      webClientId: GOOGLE_WEB_CLIENT_ID,
     });
   }, []);
 
-  const handleLogin = () => {
-    if (!username || !password) {
-      Alert.alert("Error", "Please fill in all fields");
-      return;
-    }
-
-    const normalizedUser = username.trim().toLowerCase();
-    const matchedUser = DEMO_USERS.find(
-      (user) =>
-        user.username === normalizedUser && user.password === password.trim()
-    );
-
-    if (!matchedUser) {
-      Alert.alert(
-        "Login Failed",
-        "Invalid credentials.\nUse teacher/teacher123 or student/student123"
-      );
-      return;
-    }
-
+  // ─── Navigate to Home (resets stack so user can't go back to Login) ───
+  const goToHome = () => {
     navigation.reset({
       index: 0,
-      routes: [
-        {
-          name: "Home",
-          params: {
-            role: matchedUser.role,
-            name: matchedUser.name,
-            username: matchedUser.username,
-          },
-        },
-      ],
+      routes: [{ name: "Home" }],
     });
   };
 
-  // GOOGLE LOGIN - FIXED
+  // ─── Username / Password Login ───
+  const handleLogin = () => {
+    if (!username.trim() || !password.trim()) {
+      Alert.alert("Missing Fields", "Please enter both username and password.");
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert("Weak Password", "Password must be at least 6 characters.");
+      return;
+    }
+
+    // TODO: Replace this block with your real API call, e.g.:
+    // const response = await fetch("https://your-api.com/login", { ... });
+    // if (response.ok) goToHome();
+    
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      goToHome(); // ✅ Navigate to Home after successful login
+    }, 800); // Simulated network delay – remove when using real API
+  };
+
+  // ─── Google Login ───
   const handleGoogleLogin = async () => {
+    setLoading(true);
     try {
-      await GoogleSignin.hasPlayServices();
+      if (Platform.OS === "android") {
+        await GoogleSignin.hasPlayServices();
+      }
       await GoogleSignin.signIn();
+      goToHome();
+
     } catch (error) {
       console.log("Google Login Error:", error);
-      
-      // Check if user cancelled the sign-in
-      if (error && typeof error === 'object' && 'code' in error &&
-          (error as any).code === statusCodes.SIGN_IN_CANCELLED) {
-        Alert.alert("Login Failed", "You cancelled Google Sign-In. Please try again.");
-        return; // Don't navigate to Home
+
+      const googleError = error as GoogleSigninError;
+
+      if (googleError.code === statusCodes.SIGN_IN_CANCELLED) {
+        // User dismissed the sign-in dialog – no alert needed
+        return;
+      } else if (googleError.code === statusCodes.IN_PROGRESS) {
+        Alert.alert("Please wait", "Sign-In is already in progress.");
+      } else if (googleError.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        Alert.alert("Unavailable", "Google Play Services are not available on this device.");
+      } else {
+        Alert.alert("Google Sign-In Failed", "Please try again.");
       }
-      
-      // Other errors
-      Alert.alert("Login Failed", "Google Sign-In failed. Please try again.");
-      return; // Don't navigate to Home
+    } finally {
+      setLoading(false);
     }
   };
 
-  // LINKEDIN LOGIN
+  // ─── LinkedIn Login ───
   const handleLinkedInLogin = async () => {
-    try {
-      Alert.alert(
-        "LinkedIn Login",
-        `LinkedIn Sign-In would open here!\n\nUsername: ${
-          username || "Not entered"
-        }\nPassword: ${password ? "********" : "Not entered"}`
-      );
-      // ❌ Removed: navigation.navigate("Home");
-    } catch (error) {
-      console.log("LinkedIn Login Error:", error);
-      Alert.alert("Login Failed", "LinkedIn Sign-In failed. Please try again.");
-    }
+    // TODO: Integrate a real LinkedIn OAuth library, e.g. react-native-linkedin
+    // For now this is a placeholder that navigates to Home on confirmation.
+    Alert.alert(
+      "LinkedIn Login",
+      "LinkedIn Sign-In is not yet configured. Tap OK to continue as demo.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "OK (Demo)",
+          onPress: () => goToHome(), // ✅ Navigate on confirmation
+        },
+      ]
+    );
   };
 
+  // ─── Forgot Password ───
+  const handleForgotPassword = () => {
+    if (!username.trim()) {
+      Alert.alert(
+        "Reset Password",
+        "Please enter your username above first, then tap Forgot Passcode again."
+      );
+      return;
+    }
+    // TODO: Call your password reset API here
+    Alert.alert(
+      "Password Reset",
+      `A reset link has been sent to the account associated with "${username}".`
+    );
+  };
+
+  // ─── Skip / Go Back ───
   const handleSkip = () => {
-    if (navigation?.goBack) {
+    if (navigation?.canGoBack()) {
       navigation.goBack();
     } else {
-      Alert.alert("Info", "No previous screen to go back to");
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "PreLogin" }],
+      });
     }
+  };
+
+  // ─── Navigate to Register ───
+  const handleCreateNew = () => {
+    // TODO: Create a Register screen and uncomment the line below
+    // navigation.navigate("Register");
+    Alert.alert("Coming Soon", "Registration screen is under construction.");
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <View style={styles.topGlow} />
-      <View style={styles.bottomGlow} />
 
-      <View style={styles.card}>
-        <Text style={styles.title}>Sign in</Text>
-        <Text style={styles.subtitle}>Student • Teacher</Text>
-
-        <View
-          style={[
-            styles.inputBox,
-            focusedInput === "user" && styles.activeInput,
-          ]}
+      <KeyboardAvoidingView
+        style={styles.keyboardView}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
+      <View style={[styles.card, isCompactDevice && styles.cardCompact]}>
+        <Text style={styles.title}>Hey,{"\n"}Login Now.</Text>
+
+        <Text style={styles.subtitle}>
+          If you are new /{" "}
+          <Text style={styles.linkText} onPress={handleCreateNew}>
+            Create New
+          </Text>
+        </Text>
+
+        {/* ── Username ── */}
+        <View style={[styles.inputBox, focusedInput === "user" && styles.activeInput]}>
           <TextInput
             style={styles.input}
             placeholder="Username"
             placeholderTextColor="#999"
             value={username}
             onChangeText={setUsername}
+            autoCapitalize="none"
+            autoCorrect={false}
             onFocus={() => setFocusedInput("user")}
             onBlur={() => setFocusedInput("")}
           />
         </View>
 
-        <View
-          style={[
-            styles.inputBox,
-            focusedInput === "pass" && styles.activeInput,
-          ]}
-        >
+        {/* ── Password ── */}
+        <View style={[styles.inputBox, focusedInput === "pass" && styles.activeInput]}>
           <TextInput
             style={styles.input}
             placeholder="Password"
@@ -172,46 +204,67 @@ export default function LoginScreen({ navigation }: Props) {
             secureTextEntry={!showPassword}
             value={password}
             onChangeText={setPassword}
+            autoCapitalize="none"
+            autoCorrect={false}
             onFocus={() => setFocusedInput("pass")}
             onBlur={() => setFocusedInput("")}
           />
-
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            <Text style={styles.toggleText}>{showPassword ? "Hide" : "Show"}</Text>
+            <Text style={styles.eyeIcon}>{showPassword ? "👁️" : "👁️‍🗨️"}</Text>
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.forgotRow}>
-          <Text style={styles.forgotText}>Forgot password?</Text>
+        {/* ── Forgot Password ── */}
+        <TouchableOpacity style={styles.forgotRow} onPress={handleForgotPassword}>
+          <Text style={styles.forgotText}>Forgot Passcode?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginText}>Sign In</Text>
+        {/* ── Login Button ── */}
+        <TouchableOpacity
+          style={[styles.loginButton, loading && styles.loginButtonDisabled]}
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.loginText}>Login</Text>
+          )}
         </TouchableOpacity>
 
+        {/* ── Divider ── */}
         <View style={styles.dividerRow}>
           <View style={styles.line} />
-          <Text style={styles.or}>OR</Text>
+          <Text style={styles.or}>or</Text>
           <View style={styles.line} />
         </View>
 
+        {/* ── Social Buttons ── */}
         <View style={styles.socialRow}>
-          <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
+          <TouchableOpacity
+            style={[styles.socialButton, styles.socialButtonGap]}
+            onPress={handleGoogleLogin}
+            disabled={loading}
+          >
             <Text style={styles.socialIcon}>G</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.socialButton}
             onPress={handleLinkedInLogin}
+            disabled={loading}
           >
             <Text style={styles.socialIcon}>in</Text>
           </TouchableOpacity>
         </View>
 
+        {/* ── Skip ── */}
         <TouchableOpacity onPress={handleSkip}>
-          <Text style={styles.skip}>Skip for now</Text>
+          <Text style={styles.skip}>Skip Now</Text>
         </TouchableOpacity>
       </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -220,107 +273,85 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#8BBDB3",
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 16,
+    paddingVertical: 24,
   },
-
-  topGlow: {
-    position: "absolute",
-    top: -42,
-    right: -32,
-    width: 180,
-    height: 180,
-    borderRadius: 999,
-    backgroundColor: "rgba(255,122,122,0.25)",
-  },
-
-  bottomGlow: {
-    position: "absolute",
-    bottom: -62,
-    left: -42,
-    width: 220,
-    height: 220,
-    borderRadius: 999,
-    backgroundColor: "rgba(255,255,255,0.15)",
-  },
-
   card: {
     width: "100%",
-    maxWidth: 420,
+    maxWidth: 460,
     backgroundColor: "#fff",
-    borderRadius: 30,
-    paddingHorizontal: 24,
-    paddingVertical: 28,
+    borderRadius: 35,
+    padding: 30,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
-    elevation: 8,
+    shadowOpacity: 0.2,
+    shadowRadius: 20,
+    elevation: 10,
   },
-
+  cardCompact: {
+    borderRadius: 28,
+    padding: 20,
+  },
   title: {
-    fontSize: 34,
+    fontSize: 28,
     fontWeight: "800",
-    marginBottom: 6,
-    color: "#1e2235",
-    letterSpacing: 0.2,
+    marginBottom: 10,
+    color: "#222",
   },
-
   subtitle: {
-    color: "#647082",
-    marginBottom: 24,
-    fontSize: 13,
-    fontWeight: "600",
-    letterSpacing: 0.4,
+    color: "#777",
+    marginBottom: 25,
+    fontSize: 14,
   },
-
+  linkText: {
+    fontWeight: "600",
+    color: "#1e2235",
+  },
   inputBox: {
-    backgroundColor: "#f6f7f8",
-    borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    marginBottom: 12,
+    backgroundColor: "#F5F5F5",
+    borderRadius: 15,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    marginBottom: 15,
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#ebeff2",
+    borderColor: "transparent",
   },
-
   activeInput: {
-    borderWidth: 1.5,
+    borderWidth: 2,
     borderColor: "#8BBDB3",
     backgroundColor: "#fff",
   },
-
   input: {
     flex: 1,
     fontSize: 16,
     color: "#333",
   },
-
-  toggleText: {
-    fontSize: 12,
-    color: "#6b7380",
-    fontWeight: "700",
-    letterSpacing: 0.4,
+  eyeIcon: {
+    fontSize: 18,
   },
-
   forgotRow: {
     alignItems: "flex-end",
-    marginBottom: 18,
+    marginBottom: 25,
   },
-
   forgotText: {
-    color: "#79b6ad",
+    color: "#79B6AD",
     fontWeight: "600",
-    fontSize: 13,
+    fontSize: 14,
   },
-
   loginButton: {
     backgroundColor: "#1e2235",
     paddingVertical: 16,
-    borderRadius: 14,
+    borderRadius: 15,
     alignItems: "center",
     shadowColor: "#1e2235",
     shadowOffset: { width: 0, height: 4 },
@@ -328,63 +359,54 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
   },
-
+  loginButtonDisabled: {
+    opacity: 0.6,
+  },
   loginText: {
     color: "#fff",
     fontWeight: "700",
-    fontSize: 16,
-    letterSpacing: 0.4,
+    fontSize: 17,
   },
-
   dividerRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 18,
-    marginBottom: 18,
+    marginVertical: 25,
   },
-
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: "#d9dee3",
+    backgroundColor: "#ddd",
   },
-
   or: {
     marginHorizontal: 10,
-    color: "#8b949e",
-    fontSize: 12,
-    fontWeight: "700",
-    letterSpacing: 1,
+    color: "#999",
+    fontSize: 14,
   },
-
   socialRow: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: 20,
-    marginBottom: 20,
+    marginBottom: 25,
   },
-
+  socialButtonGap: {
+    marginRight: 20,
+  },
   socialButton: {
-    width: 52,
-    height: 52,
-    borderRadius: 999,
-    backgroundColor: "#fff",
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#f3f3f3",
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#e4e9ee",
   },
-
   socialIcon: {
     fontSize: 20,
     fontWeight: "bold",
     color: "#333",
   },
-
   skip: {
     textAlign: "center",
     color: "#888",
     fontWeight: "600",
-    fontSize: 13,
+    fontSize: 15,
   },
 });
