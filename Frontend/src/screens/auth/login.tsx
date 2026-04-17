@@ -48,7 +48,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   const goToHome = () => {
     navigation.reset({
       index: 0,
-      routes: [{ name: "Home" }],
+      routes: [{ name: "Home", params: { role: "student", name: username } }],
     });
   };
 
