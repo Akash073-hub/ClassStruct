@@ -9,7 +9,6 @@
     "start": "react-native start",
     "test": "jest",
     "type-check": "tsc"
-
   },
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",

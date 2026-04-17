@@ -1,31 +1,60 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
-} from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { AuthStackParamList } from '../../../App';
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from "react-native";
+import { RouteProp } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { AuthStackParamList } from "../../../App";
+
+type HomeRouteProp = RouteProp<AuthStackParamList, "Home">;
+type HomeNavProp = NativeStackNavigationProp<AuthStackParamList, "Home">;
 
 type Props = {
-  navigation: NativeStackNavigationProp<AuthStackParamList, 'Home'>;
+  route: HomeRouteProp;
+  navigation: HomeNavProp;
 };
 
-export default function HomeScreen({ navigation }: Props) {
+export default function HomeScreen({ route, navigation }: Props) {
+  const { role, name } = route.params;
+  const isTeacher = role === "teacher";
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>Welcome Home!</Text>
-        <Text style={styles.subtitle}>You have successfully logged in.</Text>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.reset({ index: 0, routes: [{ name: 'PreLogin' }] })}
-        >
-          <Text style={styles.buttonText}>Logout</Text>
-        </TouchableOpacity>
+      <View style={styles.headerCard}>
+        <Text style={styles.welcome}>Welcome, {name}</Text>
+        <Text style={styles.role}>{isTeacher ? "Teacher Panel" : "Student Panel"}</Text>
       </View>
+
+      <View style={styles.section}>
+        <View style={styles.itemCard}>
+          <Text style={styles.itemTitle}>Attendance</Text>
+          <Text style={styles.itemText}>
+            {isTeacher ? "Update and review attendance records." : "Check your attendance status."}
+          </Text>
+        </View>
+
+        <View style={styles.itemCard}>
+          <Text style={styles.itemTitle}>Marks</Text>
+          <Text style={styles.itemText}>
+            {isTeacher ? "Edit internal and external marks." : "View your marks and progress."}
+          </Text>
+        </View>
+
+        <View style={styles.itemCard}>
+          <Text style={styles.itemTitle}>Mentorship</Text>
+          <Text style={styles.itemText}>Connect juniors and seniors in one place.</Text>
+        </View>
+      </View>
+
+      <TouchableOpacity
+        style={styles.logoutBtn}
+        onPress={() =>
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "PreLogin" }],
+          })
+        }
+      >
+        <Text style={styles.logoutText}>Logout</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -33,36 +62,55 @@ export default function HomeScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#4F46E5',
+    backgroundColor: "#8BBDB3",
+    padding: 16,
   },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  headerCard: {
+    backgroundColor: "#1e2235",
+    borderRadius: 20,
     padding: 20,
+    marginBottom: 16,
   },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 10,
+  welcome: {
+    color: "#fff",
+    fontSize: 24,
+    fontWeight: "800",
   },
-  subtitle: {
+  role: {
+    color: "rgba(255,255,255,0.85)",
+    marginTop: 6,
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  section: {
+    gap: 12,
+  },
+  itemCard: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 16,
+  },
+  itemTitle: {
+    color: "#1e2235",
     fontSize: 18,
-    color: '#E0E7FF',
-    textAlign: 'center',
-    marginBottom: 40,
+    fontWeight: "700",
+    marginBottom: 6,
   },
-  button: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 10,
-    width: '80%',
-    alignItems: 'center',
+  itemText: {
+    color: "#5f6672",
+    fontSize: 14,
+    lineHeight: 20,
   },
-  buttonText: {
-    color: '#4F46E5',
-    fontSize: 18,
-    fontWeight: '600',
+  logoutBtn: {
+    marginTop: "auto",
+    backgroundColor: "#1e2235",
+    borderRadius: 14,
+    alignItems: "center",
+    paddingVertical: 14,
+  },
+  logoutText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 15,
   },
 });
