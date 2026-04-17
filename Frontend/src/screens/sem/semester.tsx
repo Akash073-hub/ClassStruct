@@ -24,11 +24,24 @@ const SEMESTERS = [
   { id: "8", label: "8th Sem", icon: "🏅", iconBg: "#E6FFF8" },
 ];
 
+const SEMESTER_STATS: Record<string, { attendance: number; cgpa: number }> = {
+  "1": { attendance: 86, cgpa: 7.8 },
+  "2": { attendance: 89, cgpa: 8.1 },
+  "3": { attendance: 91, cgpa: 8.4 },
+  "4": { attendance: 88, cgpa: 8.2 },
+  "5": { attendance: 90, cgpa: 8.5 },
+  "6": { attendance: 87, cgpa: 8.3 },
+  "7": { attendance: 92, cgpa: 8.7 },
+  "8": { attendance: 93, cgpa: 8.9 },
+};
+
 const BLUE = "#2F52E0";
 const DARK = "#1A1A2E";
 
 export default function SemesterScreen({ navigation }: Props) {
   const [selected, setSelected] = useState("3");
+  const selectedSemester = SEMESTERS.find((s) => s.id === selected);
+  const stats = SEMESTER_STATS[selected];
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -40,7 +53,7 @@ export default function SemesterScreen({ navigation }: Props) {
           <Text style={styles.backArrow}>‹</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Select Semester</Text>
-        <View style={{ width: 38 }} />
+        <View style={styles.headerSpacer} />
       </View>
 
       <ScrollView
@@ -89,6 +102,20 @@ export default function SemesterScreen({ navigation }: Props) {
           })}
         </View>
 
+        <View style={styles.overviewCard}>
+          <Text style={styles.overviewTitle}>{selectedSemester?.label} Overview</Text>
+          <View style={styles.metricsRow}>
+            <View style={styles.metricBox}>
+              <Text style={styles.metricLabel}>Attendance</Text>
+              <Text style={styles.metricValue}>{stats.attendance}%</Text>
+            </View>
+            <View style={styles.metricBox}>
+              <Text style={styles.metricLabel}>CGPA</Text>
+              <Text style={styles.metricValue}>{stats.cgpa.toFixed(2)}</Text>
+            </View>
+          </View>
+        </View>
+
         {/* Footer help */}
         <View style={styles.helpRow}>
           <Text style={styles.helpText}>Need help finding your curriculum?</Text>
@@ -97,7 +124,7 @@ export default function SemesterScreen({ navigation }: Props) {
           </TouchableOpacity>
         </View>
 
-        <View style={{ height: 20 }} />
+        <View style={styles.bottomSpacer} />
       </ScrollView>
 
       {/* Bottom Nav */}
@@ -113,11 +140,11 @@ export default function SemesterScreen({ navigation }: Props) {
         <TouchableOpacity style={styles.fab}>
           <Text style={styles.fabPlus}>+</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Updates")}>
           <Text style={styles.navIcon}>🔔</Text>
           <Text style={styles.navLabel}>Updates</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profile")}>
           <Text style={styles.navIcon}>👤</Text>
           <Text style={styles.navLabel}>Profile</Text>
         </TouchableOpacity>
@@ -142,6 +169,7 @@ const styles = StyleSheet.create({
   backBtn: { width: 38, height: 38, justifyContent: "center", alignItems: "center" },
   backArrow: { fontSize: 32, color: DARK, lineHeight: 36, fontWeight: "300" },
   headerTitle: { fontSize: 20, fontWeight: "800", color: DARK },
+  headerSpacer: { width: 38 },
 
   sectionLabel: {
     fontSize: 11,
@@ -201,9 +229,33 @@ const styles = StyleSheet.create({
   semName: { fontSize: 18, fontWeight: "800", color: DARK },
   semNameSelected: { color: "#fff" },
 
+  overviewCard: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 18,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  overviewTitle: { fontSize: 16, fontWeight: "800", color: DARK, marginBottom: 14 },
+  metricsRow: { flexDirection: "row", gap: 12 },
+  metricBox: {
+    flex: 1,
+    backgroundColor: "#F4F6FB",
+    borderRadius: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+  },
+  metricLabel: { fontSize: 12, color: "#777", fontWeight: "600", marginBottom: 6 },
+  metricValue: { fontSize: 24, color: BLUE, fontWeight: "800" },
+
   helpRow: { alignItems: "center", paddingVertical: 10 },
   helpText: { fontSize: 13, color: "#ADADAD", marginBottom: 4 },
   helpLink: { fontSize: 14, color: BLUE, fontWeight: "700" },
+  bottomSpacer: { height: 20 },
 
   bottomNav: {
     flexDirection: "row",

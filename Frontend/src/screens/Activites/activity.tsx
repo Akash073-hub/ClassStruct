@@ -122,7 +122,7 @@ export default function ActivitiesScreen({ navigation }: Props) {
           <Text style={styles.navIcon}>👥</Text>
           <Text style={styles.navLabel}>Network</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profile")}>
           <Text style={styles.navIcon}>👤</Text>
           <Text style={styles.navLabel}>Profile</Text>
         </TouchableOpacity>

@@ -32,7 +32,7 @@ export default function HomeScreen({ navigation, route }: Props) {
         <View style={styles.header}>
           <View>
             <Text style={styles.greeting}>{getGreeting()}</Text>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View style={styles.welcomeRow}>
               <Text style={styles.welcomeBold}>Welcome back, {name}! </Text>
               <Text style={styles.wave}>👋</Text>
             </View>
@@ -80,7 +80,11 @@ export default function HomeScreen({ navigation, route }: Props) {
             <Text style={styles.cardSubtitle}>Events & campus pulse</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.card} activeOpacity={0.75}>
+          <TouchableOpacity
+            style={styles.card}
+            activeOpacity={0.75}
+            onPress={() => navigation.navigate("Semester")}
+          >
             <View style={styles.cardIconBox}>
               <Text style={styles.cardIcon}>🎓</Text>
             </View>
@@ -89,7 +93,33 @@ export default function HomeScreen({ navigation, route }: Props) {
           </TouchableOpacity>
         </View>
 
-        <View style={{ height: 20 }} />
+        <View style={styles.cardsRow}>
+          <TouchableOpacity
+            style={styles.card}
+            activeOpacity={0.75}
+            onPress={() => navigation.navigate("Teachers")}
+          >
+            <View style={[styles.cardIconBox, styles.cardIconBoxPurple]}>
+              <Text style={styles.cardIcon}>👥</Text>
+            </View>
+            <Text style={styles.cardTitle}>Teachers</Text>
+            <Text style={styles.cardSubtitle}>Mentors & support</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.card}
+            activeOpacity={0.75}
+            onPress={() => navigation.navigate("Classes")}
+          >
+            <View style={[styles.cardIconBox, styles.cardIconBoxOrange]}>
+              <Text style={styles.cardIcon}>📙</Text>
+            </View>
+            <Text style={styles.cardTitle}>Classes</Text>
+            <Text style={styles.cardSubtitle}>Schedules & labs</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.bottomSpacer} />
       </ScrollView>
 
       <View style={styles.bottomNav}>
@@ -104,11 +134,11 @@ export default function HomeScreen({ navigation, route }: Props) {
         <TouchableOpacity style={styles.fab}>
           <Text style={styles.fabPlus}>+</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Updates")}>
           <Text style={styles.navIcon}>🔔</Text>
           <Text style={styles.navLabel}>Updates</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={handleLogout}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profile")}>
           <Text style={styles.navIcon}>👤</Text>
           <Text style={styles.navLabel}>Profile</Text>
         </TouchableOpacity>
@@ -127,6 +157,7 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 20 },
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 },
   greeting: { fontSize: 15, color: "#666", fontWeight: "400" },
+  welcomeRow: { flexDirection: "row", alignItems: "center" },
   welcomeBold: { fontSize: 22, fontWeight: "800", color: DARK },
   wave: { fontSize: 22 },
   avatar: { position: "relative" },
@@ -149,9 +180,12 @@ const styles = StyleSheet.create({
   cardsRow: { flexDirection: "row", gap: 16, marginBottom: 28 },
   card: { flex: 1, backgroundColor: "#fff", borderRadius: 24, paddingVertical: 32, paddingHorizontal: 16, alignItems: "center", shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 10, elevation: 3 },
   cardIconBox: { width: 64, height: 64, borderRadius: 18, backgroundColor: BLUE_LIGHT, justifyContent: "center", alignItems: "center", marginBottom: 14 },
+  cardIconBoxPurple: { backgroundColor: "#F0E9FF" },
+  cardIconBoxOrange: { backgroundColor: "#FCEFE2" },
   cardIcon: { fontSize: 28 },
   cardTitle: { fontSize: 17, fontWeight: "800", color: DARK, marginBottom: 5 },
   cardSubtitle: { fontSize: 12, color: "#ADADAD", fontWeight: "500", textAlign: "center" },
+  bottomSpacer: { height: 20 },
   bottomNav: { flexDirection: "row", alignItems: "center", justifyContent: "space-around", backgroundColor: "#fff", paddingTop: 10, paddingBottom: 14, borderTopWidth: 1, borderTopColor: "#EEE", elevation: 10 },
   navItem: { alignItems: "center", flex: 1 },
   navIcon: { fontSize: 20, marginBottom: 2, opacity: 0.45 },
