@@ -177,7 +177,7 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
             <Field
               label="Full Name"
               icon="🙍"
-              placeholder="e.g. John Doe"
+              placeholder="e.g. Danish sir"
               value={fullName}
               onChangeText={setFullName}
               focusKey="fullName"
