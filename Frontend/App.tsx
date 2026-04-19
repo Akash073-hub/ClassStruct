@@ -3,28 +3,24 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import PreLoginScreen from "./src/screens/auth/PreLogin";
-import LoginScreen from "./src/screens/auth/login";
-import HomeScreen from "./src/screens/home/Home";
+import PreLoginScreen  from "./src/screens/auth/PreLogin";
+import LoginScreen     from "./src/screens/auth/login";
+import CreateNewScreen from "./src/screens/auth/Create_new";
+import HomeScreen      from "./src/screens/home/Home";
 import ActivitiesScreen from "./src/screens/Activites/activity";
-import SemesterScreen from "./src/screens/sem/semester";
-import ClassesScreen from "./src/screens/Classes/Classes";
-import TeachersScreen from "./src/screens/Teacher/Teachers";
+import SemesterScreen  from "./src/screens/sem/semester";
+import ClassesScreen   from "./src/screens/Classes/Classes";
+import TeachersScreen  from "./src/screens/Teacher/Teachers";
 
 export type AuthStackParamList = {
-  PreLogin: undefined;
-  Login: undefined;
-  Home:
-    | {
-        role?: "teacher" | "student";
-        name?: string;
-        username?: string;
-      }
-    | undefined;
+  PreLogin:  undefined;
+  Login:     undefined;
+  CreateNew: undefined;
+  Home:      { role?: "teacher" | "student"; name?: string; username?: string } | undefined;
   Activities: undefined;
-  Semester: undefined;
-  Classes: undefined;
-  Teachers: undefined;
+  Semester:   undefined;
+  Classes:    undefined;
+  Teachers:   undefined;
 };
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
@@ -37,13 +33,14 @@ export default function App() {
           initialRouteName="PreLogin"
           screenOptions={{ headerShown: false }}
         >
-          <Stack.Screen name="PreLogin" component={PreLoginScreen} />
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="PreLogin"   component={PreLoginScreen} />
+          <Stack.Screen name="Login"      component={LoginScreen} />
+          <Stack.Screen name="CreateNew"  component={CreateNewScreen} />
+          <Stack.Screen name="Home"       component={HomeScreen} />
           <Stack.Screen name="Activities" component={ActivitiesScreen} />
-          <Stack.Screen name="Semester" component={SemesterScreen} />
-          <Stack.Screen name="Classes" component={ClassesScreen} />
-          <Stack.Screen name="Teachers" component={TeachersScreen} />
+          <Stack.Screen name="Semester"   component={SemesterScreen} />
+          <Stack.Screen name="Classes"    component={ClassesScreen} />
+          <Stack.Screen name="Teachers"   component={TeachersScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

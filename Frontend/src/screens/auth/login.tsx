@@ -44,7 +44,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   const usernameErr = usernameTouched && !isAlphaOnly(username)
     ? username.length === 0
       ? "Username is required."
-      : "Only letters A–Z allowed. No numbers or symbols."
+      : "Only letters A-Z allowed. No numbers or symbols."
     : "";
 
   const emailErr = emailTouched && !isRvuEmail(email)
@@ -129,7 +129,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
 
   // ── Register ──
   const handleCreateNew = () => {
-    Alert.alert("Coming Soon", "Registration screen is under construction.");
+    navigation.navigate("CreateNew");
   };
 
   return (
@@ -158,7 +158,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
               <Text style={styles.icon}>👤</Text>
               <TextInput
                 style={styles.input}
-                placeholder="e.g. JohnDoe"
+                placeholder="e.g. Danish sir"
                 placeholderTextColor="#BABABA"
                 value={username}
                 onChangeText={handleUsernameChange}
