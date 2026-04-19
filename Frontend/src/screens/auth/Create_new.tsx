@@ -188,7 +188,7 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
             <Field
               label="Username"
               icon="👤"
-              placeholder="e.g. JohnDoe  (letters only)"
+              placeholder="e.g. DanishSir  (letters only)"
               value={username}
               onChangeText={handleUsernameChange}
               focusKey="username"
