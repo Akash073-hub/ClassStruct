@@ -26,7 +26,7 @@ type FieldProps = {
   placeholder: string;
   value: string;
   onChangeText: (text: string) => void;
-  focusKey: "fullName" | "username" | "email" | "phone" | "password" | "confirm";
+  focusKey: string;
   keyboardType?: "default" | "email-address" | "phone-pad";
   secureTextEntry?: boolean;
   returnKeyType?: "next" | "done";
@@ -80,7 +80,7 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
       : "",
   };
 
-  const hasErrors = Object.values(errors).some(Boolean);
+
 
   // ── Handlers ──
   const handleUsernameChange = (text: string) =>
