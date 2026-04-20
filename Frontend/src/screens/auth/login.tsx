@@ -88,26 +88,16 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   };
 
   const handleGoogleLogin = async () => {
-    setLoading(true);
-    try {
-      if (Platform.OS === "android") await GoogleSignin.hasPlayServices();
-      await GoogleSignin.signIn();
-      goToHome();
-    } catch (error) {
-      const e = error as GoogleSigninError;
-      if (e.code === statusCodes.SIGN_IN_CANCELLED) return;
-      else if (e.code === statusCodes.IN_PROGRESS) Alert.alert("Please wait", "Sign-in already in progress.");
-      else if (e.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) Alert.alert("Unavailable", "Google Play Services not available.");
-      else Alert.alert("Google Sign-In Failed", "Please try again.");
-    } finally {
-      setLoading(false);
-    }
+      Alert.alert("Google Sign-In Failed", "Please try again..", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Under construction", onPress: () => navigation.replace("Login") },
+    ]);
   };
 
   const handleLinkedInLogin = () => {
     Alert.alert("LinkedIn Login", "LinkedIn Sign-In is not yet configured. Tap OK to continue as demo.", [
       { text: "Cancel", style: "cancel" },
-      { text: "OK (Demo)", onPress: goToHome },
+      { text: "Under construction", onPress: () => navigation.replace("Login") },
     ]);
   };
 
