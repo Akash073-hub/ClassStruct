@@ -18,6 +18,8 @@ import {
 import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
 
 const GOOGLE_WEB_CLIENT_ID = "YOUR_GOOGLE_WEB_CLIENT_ID.apps.googleusercontent.com";
+const API_BASE_URL =
+  Platform.OS === "android" ? "http://10.0.2.2:8080" : "http://localhost:8080";
 
 // ── Validation ─────────────────────────────────────────────
 const isAlphaOnly = (v: string) => /^[A-Za-z]+$/.test(v);
@@ -78,13 +80,44 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
     setUsername(text.replace(/[^A-Za-z]/g, ""));
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     setUsernameTouched(true);
     setEmailTouched(true);
     setPasswordTouched(true);
     if (!isAlphaOnly(username) || !isRvuEmail(email) || password.length < 6) return;
+
     setLoading(true);
-    setTimeout(() => { setLoading(false); goToHome(); }, 800);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: username.trim(),
+          email: email.trim(),
+          password,
+          role,
+        }),
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          Alert.alert("Login failed", "Invalid credentials for selected role.");
+          return;
+        }
+        Alert.alert("Login failed", "Unable to sign in right now. Please try again.");
+        return;
+      }
+
+      const data = await response.json();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Home", params: { role: data.role, name: data.name, username: data.username } }],
+      });
+    } catch {
+      Alert.alert("Server unreachable", "Please start backend on port 8080 and try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGoogleLogin = async () => {
