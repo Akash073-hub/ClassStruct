@@ -14,6 +14,7 @@ import {
   Platform,
   useWindowDimensions,
 } from "react-native";
+import { authApi } from "../../services/authApi";
 
 // ── Validation ──────────────────────────────────────────────
 const isAlphaOnly = (v: string) => /^[A-Za-z]+$/.test(v);
@@ -89,7 +90,7 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
   const handlePhoneChange = (text: string) =>
     setPhone(text.replace(/[^0-9]/g, "").slice(0, 10));
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     // Mark all fields touched to show any errors
     setT({ fullName: true, username: true, email: true, phone: true, password: true, confirm: true });
 
@@ -103,14 +104,26 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
     ) return;
 
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      await authApi.register({
+        fullName: fullName.trim(),
+        username: username.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        password,
+        confirmPassword: confirm,
+        role: "student",
+      });
       Alert.alert(
-        "Account Created! 🎉",
+        "Account Created!",
         `Welcome, ${fullName}! Your account has been created successfully.`,
         [{ text: "Login Now", onPress: () => navigation.navigate("Login") }]
       );
-    }, 1000);
+    } catch (error) {
+      Alert.alert("Account Creation Failed", error instanceof Error ? error.message : "Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // ── Reusable field renderer ──

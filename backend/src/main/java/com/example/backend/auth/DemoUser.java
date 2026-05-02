@@ -5,6 +5,7 @@ public record DemoUser(
         String email,
         String password,
         String role,
-        String displayName
+        String displayName,
+        String phone
 ) {
 }
