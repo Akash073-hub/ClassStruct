@@ -16,17 +16,15 @@ import {
 } from "react-native";
 
 import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
+import { authApi, Role } from "../../services/authApi";
 
 const GOOGLE_WEB_CLIENT_ID = "YOUR_GOOGLE_WEB_CLIENT_ID.apps.googleusercontent.com";
-const API_BASE_URL =
-  Platform.OS === "android" ? "http://10.0.2.2:8080" : "http://localhost:8080";
 
 // ── Validation ─────────────────────────────────────────────
 const isAlphaOnly = (v: string) => /^[A-Za-z]+$/.test(v);
 const isRvuEmail  = (v: string) => /^[^\s@]+@rvu\.edu\.in$/i.test(v);
 
 type GoogleSigninError = { code?: string };
-type Role = "student" | "teacher";
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
   const { width } = useWindowDimensions();
@@ -38,6 +36,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   const [username,      setUsername]      = useState("");
   const [email,         setEmail]         = useState("");
   const [password,      setPassword]      = useState("");
+  const [detectedName,  setDetectedName]  = useState("");
   const [showPassword,  setShowPassword]  = useState(false);
   const [loading,       setLoading]       = useState(false);
   const [focused,       setFocused]       = useState("");
@@ -68,16 +67,37 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
     setUsername("");
     setEmail("");
     setPassword("");
+    setDetectedName("");
     setUsernameTouched(false);
     setEmailTouched(false);
     setPasswordTouched(false);
   };
 
-  const goToHome = () =>
-    navigation.reset({ index: 0, routes: [{ name: "Home", params: { role, name: username } }] });
+  const goToHome = (user: { role: Role; name: string; username: string }) =>
+    navigation.reset({ index: 0, routes: [{ name: "Home", params: user }] });
 
   const handleUsernameChange = (text: string) => {
     setUsername(text.replace(/[^A-Za-z]/g, ""));
+  };
+
+  const handleEmailBlur = async () => {
+    setFocused("");
+    setEmailTouched(true);
+
+    if (!isRvuEmail(email)) {
+      setDetectedName("");
+      return;
+    }
+
+    try {
+      const data = await authApi.lookup(email.trim(), role);
+      setDetectedName(data.name ?? "");
+      if (!username.trim() && data.username) {
+        setUsername(String(data.username));
+      }
+    } catch {
+      setDetectedName("");
+    }
   };
 
   const handleLogin = async () => {
@@ -88,33 +108,15 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
 
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: username.trim(),
-          email: email.trim(),
-          password,
-          role,
-        }),
+      const data = await authApi.login({
+        username: username.trim(),
+        email: email.trim(),
+        password,
+        role,
       });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          Alert.alert("Login failed", "Invalid credentials for selected role.");
-          return;
-        }
-        Alert.alert("Login failed", "Unable to sign in right now. Please try again.");
-        return;
-      }
-
-      const data = await response.json();
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "Home", params: { role: data.role, name: data.name, username: data.username } }],
-      });
-    } catch {
-      Alert.alert("Server unreachable", "Please start backend on port 8080 and try again.");
+      goToHome({ role: data.role, name: data.name, username: data.username });
+    } catch (error) {
+      Alert.alert("Login failed", error instanceof Error ? error.message : "Please start backend on port 8080 and try again.");
     } finally {
       setLoading(false);
     }
@@ -124,8 +126,17 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
     setLoading(true);
     try {
       if (Platform.OS === "android") await GoogleSignin.hasPlayServices();
-      await GoogleSignin.signIn();
-      goToHome();
+      const result = await GoogleSignin.signIn();
+      const userInfo = result as any;
+      const googleUser = userInfo?.data?.user ?? userInfo?.user;
+      const data = await authApi.socialLogin({
+        provider: "google",
+        email: googleUser?.email,
+        name: googleUser?.name,
+        token: userInfo?.data?.idToken ?? userInfo?.idToken,
+        role,
+      });
+      goToHome({ role: data.role, name: data.name, username: data.username });
     } catch (error) {
       const e = error as GoogleSigninError;
       if (e.code === statusCodes.SIGN_IN_CANCELLED) return;
@@ -138,18 +149,23 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   };
 
   const handleLinkedInLogin = () => {
-    Alert.alert("LinkedIn Login", "LinkedIn Sign-In is not yet configured. Tap OK to continue as demo.", [
-      { text: "Cancel", style: "cancel" },
-      { text: "OK (Demo)", onPress: goToHome },
-    ]);
+    Alert.alert("LinkedIn Login", "LinkedIn Sign-In is not configured yet.");
   };
 
-  const handleForgotPassword = () => {
+  const handleForgotPassword = async () => {
     if (!isRvuEmail(email)) {
       Alert.alert("Enter Email First", "Please enter your valid @rvu.edu.in email above.");
       return;
     }
-    Alert.alert("Password Reset", `A reset link has been sent to ${email}.`);
+    setLoading(true);
+    try {
+      await authApi.forgotPassword({ email: email.trim(), role });
+      Alert.alert("Password Reset", `A reset request has been accepted for ${email}.`);
+    } catch (error) {
+      Alert.alert("Password Reset Failed", error instanceof Error ? error.message : "Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSkip = () => {
@@ -258,13 +274,16 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
                 keyboardType="email-address"
                 returnKeyType="next"
                 onFocus={() => setFocused("email")}
-                onBlur={() => { setFocused(""); setEmailTouched(true); }}
+                onBlur={handleEmailBlur}
               />
               {email.length > 0 && (
                 <Text style={styles.indicator}>{isRvuEmail(email) ? "✅" : "❌"}</Text>
               )}
             </View>
             {!!emailErr && <Text style={styles.errorMsg}>⚠ {emailErr}</Text>}
+            {!emailErr && detectedName.length > 0 && (
+              <Text style={styles.detectedText}>Recognized: {detectedName}</Text>
+            )}
 
             {/* ── PASSWORD ── */}
             <Text style={styles.label}>Password</Text>
@@ -438,6 +457,7 @@ const styles = StyleSheet.create({
   eyeIcon:   { fontSize: 18, marginLeft: 6 },
 
   errorMsg: { fontSize: 12, color: "#FF4D4D", marginBottom: 14, marginLeft: 4 },
+  detectedText: { fontSize: 12, color: "#2A6A5F", marginBottom: 14, marginLeft: 4, fontWeight: "600" },
 
   forgotRow: { alignItems: "flex-end", marginTop: 4, marginBottom: 22 },
   forgotText: { color: TEAL, fontWeight: "600", fontSize: 13 },

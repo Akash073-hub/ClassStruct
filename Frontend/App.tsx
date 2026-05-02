@@ -11,9 +11,6 @@ import ActivitiesScreen from './src/screens/Activites/activity';
 import SemesterScreen from './src/screens/sem/semester';
 import ClassesScreen from './src/screens/Classes/Classes';
 import TeachersScreen from './src/screens/Teacher/Teachers';
-import SemesterScreen from './src/screens/sem/semester';
-import ClassesScreen from './src/screens/Classes/Classes';
-import TeachersScreen from './src/screens/Teacher/Teachers';
 import ProfileScreen from './src/screens/profile/Profile';
 import UpdatesScreen from './src/screens/updates/Updates';
 
@@ -25,9 +22,6 @@ export type AuthStackParamList = {
     | { role?: 'teacher' | 'student'; name?: string; username?: string }
     | undefined;
   Activities: undefined;
-  Semester: undefined;
-  Classes: undefined;
-  Teachers: undefined;
   Semester: undefined;
   Classes: undefined;
   Teachers: undefined;
@@ -50,9 +44,6 @@ export default function App() {
           <Stack.Screen name="CreateNew" component={CreateNewScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Activities" component={ActivitiesScreen} />
-          <Stack.Screen name="Semester" component={SemesterScreen} />
-          <Stack.Screen name="Classes" component={ClassesScreen} />
-          <Stack.Screen name="Teachers" component={TeachersScreen} />
           <Stack.Screen name="Semester" component={SemesterScreen} />
           <Stack.Screen name="Classes" component={ClassesScreen} />
           <Stack.Screen name="Teachers" component={TeachersScreen} />
