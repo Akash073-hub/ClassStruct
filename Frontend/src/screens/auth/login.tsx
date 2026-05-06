@@ -73,7 +73,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
     setPasswordTouched(false);
   };
 
-  const goToHome = (user: { role: Role; name: string; username: string }) =>
+  const goToHome = (user: { role: Role; name: string; username: string; email: string }) =>
     navigation.reset({ index: 0, routes: [{ name: "Home", params: user }] });
 
   const handleUsernameChange = (text: string) => {
@@ -114,7 +114,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
         password,
         role,
       });
-      goToHome({ role: data.role, name: data.name, username: data.username });
+      goToHome({ role: data.role, name: data.name, username: data.username, email: data.email });
     } catch (error) {
       Alert.alert("Login failed", error instanceof Error ? error.message : "Please start backend on port 8080 and try again.");
     } finally {
@@ -136,7 +136,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
         token: userInfo?.data?.idToken ?? userInfo?.idToken,
         role,
       });
-      goToHome({ role: data.role, name: data.name, username: data.username });
+      goToHome({ role: data.role, name: data.name, username: data.username, email: data.email });
     } catch (error) {
       const e = error as GoogleSigninError;
       if (e.code === statusCodes.SIGN_IN_CANCELLED) return;
