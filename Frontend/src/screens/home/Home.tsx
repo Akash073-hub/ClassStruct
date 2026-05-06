@@ -5,11 +5,11 @@ import type { AuthStackParamList } from "../../../App";
 
 type Props = {
   navigation: NativeStackNavigationProp<AuthStackParamList, "Home">;
-  route?: { params?: { role?: string; name?: string } };
+  route?: { params?: { role?: string; name?: string; email?: string } };
 };
 
 export default function HomeScreen({ navigation, route }: Props) {
-  const { name = "Student" } = route?.params ?? {};
+  const { name = "Student", email = "" } = route?.params ?? {};
   const [searchText, setSearchText] = useState("");
   const progress = 0.75;
   const currentWeek = 12;
@@ -36,6 +36,7 @@ export default function HomeScreen({ navigation, route }: Props) {
               <Text style={styles.welcomeBold}>Welcome back, {name}! </Text>
               <Text style={styles.wave}>👋</Text>
             </View>
+            {!!email && <Text style={styles.emailText}>{email}</Text>}
           </View>
           <TouchableOpacity style={styles.avatar} onPress={handleLogout}>
             <View style={styles.avatarInner}>
@@ -159,6 +160,7 @@ const styles = StyleSheet.create({
   greeting: { fontSize: 15, color: "#666", fontWeight: "400" },
   welcomeRow: { flexDirection: "row", alignItems: "center" },
   welcomeBold: { fontSize: 22, fontWeight: "800", color: DARK },
+  emailText: { fontSize: 13, color: "#667085", fontWeight: "600", marginTop: 3 },
   wave: { fontSize: 22 },
   avatar: { position: "relative" },
   avatarInner: { width: 46, height: 46, borderRadius: 23, backgroundColor: "#D6E4FF", justifyContent: "center", alignItems: "center" },

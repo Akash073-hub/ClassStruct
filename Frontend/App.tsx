@@ -19,7 +19,7 @@ export type AuthStackParamList = {
   Login: undefined;
   CreateNew: undefined;
   Home:
-    | { role?: 'teacher' | 'student'; name?: string; username?: string }
+    | { role?: 'teacher' | 'student'; name?: string; username?: string; email?: string }
     | undefined;
   Activities: undefined;
   Semester: undefined;

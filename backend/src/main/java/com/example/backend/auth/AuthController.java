@@ -11,9 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
 @RestController
@@ -25,10 +23,11 @@ public class AuthController {
     private static final Pattern RVU_EMAIL = Pattern.compile("^[^\\s@]+@rvu\\.edu\\.in$", Pattern.CASE_INSENSITIVE);
     private static final Pattern INDIAN_PHONE = Pattern.compile("^[6-9]\\d{9}$");
 
-    private static final List<DemoUser> USERS = new CopyOnWriteArrayList<>(List.of(
-            new DemoUser("student1", "student1@rvu.edu.in", "student123", "student", "Student One", "9876543210"),
-            new DemoUser("teacher1", "teacher1@rvu.edu.in", "teacher123", "teacher", "Teacher One", "9876543211")
-    ));
+    private final UserAccountRepository userAccountRepository;
+
+    public AuthController(UserAccountRepository userAccountRepository) {
+        this.userAccountRepository = userAccountRepository;
+    }
 
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) {
@@ -40,20 +39,20 @@ public class AuthController {
         String fullName = request.fullName().trim();
         String phone = request.phone().trim();
 
-        boolean userExists = USERS.stream()
-                .anyMatch(user -> user.username().equalsIgnoreCase(username)
-                        || user.email().equalsIgnoreCase(email)
-                        || (user.phone() != null && user.phone().equals(phone)));
+        boolean userExists = userAccountRepository.findAll().stream()
+                .anyMatch(user -> user.getUsername().equalsIgnoreCase(username)
+                        || user.getEmail().equalsIgnoreCase(email)
+                        || (user.getPhone() != null && user.getPhone().equals(phone)));
 
         if (userExists) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Username, email, or phone already exists");
         }
 
-        DemoUser user = new DemoUser(username, email, request.password(), role, fullName, phone);
-        USERS.add(user);
+        UserAccount user = new UserAccount(fullName, email, username, request.password(), role, null, phone);
+        userAccountRepository.save(user);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new RegisterResponse(user.role(), user.displayName(), user.username(), user.email()));
+                .body(new RegisterResponse(user.getRole(), user.getDisplayName(), user.getUsername(), user.getEmail()));
     }
 
     @PostMapping("/forgot-password")
@@ -68,10 +67,7 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Use a valid @rvu.edu.in email");
         }
 
-        USERS.stream()
-                .filter(user -> user.email().equalsIgnoreCase(email))
-                .filter(user -> user.role().equalsIgnoreCase(role))
-                .findFirst()
+        findByEmailAndRole(email, role)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No user found"));
 
         return ResponseEntity.ok(new PasswordResetResponse("Password reset request accepted", email));
@@ -89,16 +85,11 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Use your RVU college email");
         }
 
-        DemoUser user = USERS.stream()
-                .filter(existing -> existing.email().equalsIgnoreCase(email))
-                .filter(existing -> existing.role().equalsIgnoreCase(role))
-                .findFirst()
+        UserAccount user = findByEmailAndRole(email, role)
                 .orElseGet(() -> {
                     String displayName = isBlank(request.name()) ? email.substring(0, email.indexOf("@")) : request.name().trim();
                     String username = uniqueUsername(displayName);
-                    DemoUser createdUser = new DemoUser(username, email, "social-login", role, displayName, null);
-                    USERS.add(createdUser);
-                    return createdUser;
+                    return userAccountRepository.save(new UserAccount(displayName, email, username, "social-login", role, null, null));
                 });
 
         return ResponseEntity.ok(loginResponseFor(user));
@@ -111,17 +102,14 @@ public class AuthController {
         }
 
         String normalizedRole = normalizeRole(role);
-        Optional<DemoUser> matchedUser = USERS.stream()
-                .filter(user -> user.email().equalsIgnoreCase(email.trim()))
-                .filter(user -> user.role().equalsIgnoreCase(normalizedRole))
-                .findFirst();
+        Optional<UserAccount> matchedUser = findByEmailAndRole(email.trim(), normalizedRole);
 
         if (matchedUser.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No user found");
         }
 
-        DemoUser user = matchedUser.get();
-        return ResponseEntity.ok(new LookupResponse(user.displayName(), user.username(), user.role(), user.email()));
+        UserAccount user = matchedUser.get();
+        return ResponseEntity.ok(new LookupResponse(user.getDisplayName(), user.getUsername(), user.getRole(), user.getEmail()));
     }
 
     @PostMapping("/login")
@@ -138,12 +126,12 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid login details");
         }
 
-        DemoUser user = USERS.stream()
-                .filter(existing -> existing.username().equalsIgnoreCase(username)
-                        || existing.displayName().equalsIgnoreCase(username))
-                .filter(existing -> existing.email().equalsIgnoreCase(email))
-                .filter(existing -> existing.password().equals(request.password()))
-                .filter(existing -> existing.role().equalsIgnoreCase(role))
+        UserAccount user = userAccountRepository.findAll().stream()
+                .filter(existing -> existing.getUsername().equalsIgnoreCase(username)
+                        || existing.getDisplayName().equalsIgnoreCase(username))
+                .filter(existing -> existing.getEmail().equalsIgnoreCase(email))
+                .filter(existing -> existing.getPassword().equals(request.password()))
+                .filter(existing -> existing.getRole().equalsIgnoreCase(role))
                 .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials"));
 
@@ -192,17 +180,17 @@ public class AuthController {
         return normalized;
     }
 
-    private static LoginResponse loginResponseFor(DemoUser user) {
+    private static LoginResponse loginResponseFor(UserAccount user) {
         return new LoginResponse(
-                "demo-token-" + user.role() + "-" + user.username(),
-                user.role(),
-                user.displayName(),
-                user.username(),
-                user.email()
+                "demo-token-" + user.getRole() + "-" + user.getUsername(),
+                user.getRole(),
+                user.getDisplayName(),
+                user.getUsername(),
+                user.getEmail()
         );
     }
 
-    private static String uniqueUsername(String displayName) {
+    private String uniqueUsername(String displayName) {
         String base = displayName.replaceAll("[^A-Za-z]", "");
         if (base.isBlank()) {
             base = "User";
@@ -211,14 +199,32 @@ public class AuthController {
         String candidate = base;
         int suffix = 1;
         while (usernameExists(candidate)) {
-            candidate = base + suffix;
+            candidate = base + lettersFor(suffix);
             suffix++;
         }
         return candidate;
     }
 
-    private static boolean usernameExists(String username) {
-        return USERS.stream().anyMatch(user -> user.username().equalsIgnoreCase(username));
+    private boolean usernameExists(String username) {
+        return userAccountRepository.findAll().stream()
+                .anyMatch(user -> user.getUsername().equalsIgnoreCase(username));
+    }
+
+    private Optional<UserAccount> findByEmailAndRole(String email, String role) {
+        return userAccountRepository.findAll().stream()
+                .filter(user -> user.getEmail().equalsIgnoreCase(email.trim()))
+                .filter(user -> user.getRole().equalsIgnoreCase(role.trim()))
+                .findFirst();
+    }
+
+    private String lettersFor(int index) {
+        StringBuilder value = new StringBuilder();
+        int current = index;
+        do {
+            value.append((char) ('A' + (current % 26)));
+            current = current / 26 - 1;
+        } while (current >= 0);
+        return value.toString();
     }
 
     private static boolean isBlank(String value) {
