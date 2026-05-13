@@ -157,7 +157,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
             </View>
 
             {/* ── USERNAME ── */}
-            <Text style={styles.label}>Username</Text>
+            <Text style={styles.label}>Name</Text>
             <View style={[
               styles.inputBox,
               focused === "user" && styles.inputFocused,
@@ -165,7 +165,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
               <Text style={styles.icon}>👤</Text>
               <TextInput
                 style={styles.input}
-                placeholder={role === "student" ? "e.g. JohnDoe" : "e.g. ProfSmith"}
+                placeholder={role === "student" ? "e.g. Akash Ramachandra Bhat" : "e.g. Teacher One"}
                 placeholderTextColor="#BABABA"
                 value={username}
                 onChangeText={setUsername}
@@ -212,7 +212,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
               <Text style={styles.icon}>🔒</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Min. 6 characters"
+                placeholder="Any password"
                 placeholderTextColor="#BABABA"
                 value={password}
                 onChangeText={setPassword}
