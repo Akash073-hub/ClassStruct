@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -15,16 +15,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 
-import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
 import { authApi, Role } from "../../services/authApi";
-
-const GOOGLE_WEB_CLIENT_ID = "YOUR_GOOGLE_WEB_CLIENT_ID.apps.googleusercontent.com";
-
-// ── Validation ─────────────────────────────────────────────
-const isAlphaOnly = (v: string) => /^[A-Za-z]+$/.test(v);
-const isRvuEmail  = (v: string) => /^[^\s@]+@rvu\.edu\.in$/i.test(v);
-
-type GoogleSigninError = { code?: string };
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
   const { width } = useWindowDimensions();
@@ -41,26 +32,6 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   const [loading,       setLoading]       = useState(false);
   const [focused,       setFocused]       = useState("");
 
-  const [usernameTouched, setUsernameTouched] = useState(false);
-  const [emailTouched,    setEmailTouched]    = useState(false);
-  const [passwordTouched, setPasswordTouched] = useState(false);
-
-  const usernameErr = usernameTouched && !isAlphaOnly(username)
-    ? username.length === 0 ? "Username is required." : "Only letters A-Z allowed. No numbers or symbols."
-    : "";
-
-  const emailErr = emailTouched && !isRvuEmail(email)
-    ? email.length === 0 ? "College email is required." : "Must be a valid @rvu.edu.in address."
-    : "";
-
-  const passwordErr = passwordTouched && password.length < 6
-    ? password.length === 0 ? "Password is required." : "Minimum 6 characters."
-    : "";
-
-  useEffect(() => {
-    GoogleSignin.configure({ webClientId: GOOGLE_WEB_CLIENT_ID });
-  }, []);
-
   // Reset fields when role switches
   const handleRoleSwitch = (newRole: Role) => {
     setRole(newRole);
@@ -68,23 +39,15 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
     setEmail("");
     setPassword("");
     setDetectedName("");
-    setUsernameTouched(false);
-    setEmailTouched(false);
-    setPasswordTouched(false);
   };
 
   const goToHome = (user: { role: Role; name: string; username: string; email: string }) =>
     navigation.reset({ index: 0, routes: [{ name: "Home", params: user }] });
 
-  const handleUsernameChange = (text: string) => {
-    setUsername(text.replace(/[^A-Za-z]/g, ""));
-  };
-
   const handleEmailBlur = async () => {
     setFocused("");
-    setEmailTouched(true);
 
-    if (!isRvuEmail(email)) {
+    if (!email.trim()) {
       setDetectedName("");
       return;
     }
@@ -101,11 +64,6 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   };
 
   const handleLogin = async () => {
-    setUsernameTouched(true);
-    setEmailTouched(true);
-    setPasswordTouched(true);
-    if (!isAlphaOnly(username) || !isRvuEmail(email) || password.length < 6) return;
-
     setLoading(true);
     try {
       const data = await authApi.login({
@@ -122,39 +80,9 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    setLoading(true);
-    try {
-      if (Platform.OS === "android") await GoogleSignin.hasPlayServices();
-      const result = await GoogleSignin.signIn();
-      const userInfo = result as any;
-      const googleUser = userInfo?.data?.user ?? userInfo?.user;
-      const data = await authApi.socialLogin({
-        provider: "google",
-        email: googleUser?.email,
-        name: googleUser?.name,
-        token: userInfo?.data?.idToken ?? userInfo?.idToken,
-        role,
-      });
-      goToHome({ role: data.role, name: data.name, username: data.username, email: data.email });
-    } catch (error) {
-      const e = error as GoogleSigninError;
-      if (e.code === statusCodes.SIGN_IN_CANCELLED) return;
-      else if (e.code === statusCodes.IN_PROGRESS) Alert.alert("Please wait", "Sign-in already in progress.");
-      else if (e.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) Alert.alert("Unavailable", "Google Play Services not available.");
-      else Alert.alert("Google Sign-In Failed", "Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLinkedInLogin = () => {
-    Alert.alert("LinkedIn Login", "LinkedIn Sign-In is not configured yet.");
-  };
-
   const handleForgotPassword = async () => {
-    if (!isRvuEmail(email)) {
-      Alert.alert("Enter Email First", "Please enter your valid @rvu.edu.in email above.");
+    if (!email.trim()) {
+      Alert.alert("Enter Email First", "Please enter your email above.");
       return;
     }
     setLoading(true);
@@ -233,7 +161,6 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
             <View style={[
               styles.inputBox,
               focused === "user" && styles.inputFocused,
-              !!usernameErr && styles.inputError,
             ]}>
               <Text style={styles.icon}>👤</Text>
               <TextInput
@@ -241,26 +168,21 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
                 placeholder={role === "student" ? "e.g. JohnDoe" : "e.g. ProfSmith"}
                 placeholderTextColor="#BABABA"
                 value={username}
-                onChangeText={handleUsernameChange}
+                onChangeText={setUsername}
                 autoCapitalize="none"
                 autoCorrect={false}
                 keyboardType="default"
                 returnKeyType="next"
                 onFocus={() => setFocused("user")}
-                onBlur={() => { setFocused(""); setUsernameTouched(true); }}
+                onBlur={() => setFocused("")}
               />
-              {username.length > 0 && (
-                <Text style={styles.indicator}>{isAlphaOnly(username) ? "✅" : "❌"}</Text>
-              )}
             </View>
-            {!!usernameErr && <Text style={styles.errorMsg}>⚠ {usernameErr}</Text>}
 
             {/* ── COLLEGE EMAIL ── */}
             <Text style={styles.label}>College Email</Text>
             <View style={[
               styles.inputBox,
               focused === "email" && styles.inputFocused,
-              !!emailErr && styles.inputError,
             ]}>
               <Text style={styles.icon}>✉️</Text>
               <TextInput
@@ -276,12 +198,8 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
                 onFocus={() => setFocused("email")}
                 onBlur={handleEmailBlur}
               />
-              {email.length > 0 && (
-                <Text style={styles.indicator}>{isRvuEmail(email) ? "✅" : "❌"}</Text>
-              )}
             </View>
-            {!!emailErr && <Text style={styles.errorMsg}>⚠ {emailErr}</Text>}
-            {!emailErr && detectedName.length > 0 && (
+            {detectedName.length > 0 && (
               <Text style={styles.detectedText}>Recognized: {detectedName}</Text>
             )}
 
@@ -290,7 +208,6 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
             <View style={[
               styles.inputBox,
               focused === "pass" && styles.inputFocused,
-              !!passwordErr && styles.inputError,
             ]}>
               <Text style={styles.icon}>🔒</Text>
               <TextInput
@@ -304,7 +221,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
                 autoCorrect={false}
                 returnKeyType="done"
                 onFocus={() => setFocused("pass")}
-                onBlur={() => { setFocused(""); setPasswordTouched(true); }}
+                onBlur={() => setFocused("")}
                 onSubmitEditing={handleLogin}
               />
               <TouchableOpacity
@@ -314,7 +231,6 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
                 <Text style={styles.eyeIcon}>{showPassword ? "👁️" : "👁️‍🗨️"}</Text>
               </TouchableOpacity>
             </View>
-            {!!passwordErr && <Text style={styles.errorMsg}>⚠ {passwordErr}</Text>}
 
             {/* ── Forgot Passcode ── */}
             <TouchableOpacity style={styles.forgotRow} onPress={handleForgotPassword}>
@@ -333,23 +249,6 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
                 : <Text style={styles.loginText}>Login as {role === "student" ? "Student" : "Teacher"}</Text>
               }
             </TouchableOpacity>
-
-            {/* ── Divider ── */}
-            <View style={styles.divider}>
-              <View style={styles.divLine} />
-              <Text style={styles.divOr}>or</Text>
-              <View style={styles.divLine} />
-            </View>
-
-            {/* ── Social ── */}
-            <View style={styles.socialRow}>
-              <TouchableOpacity style={styles.socialBtnG} onPress={handleGoogleLogin} disabled={loading}>
-                <Text style={styles.socialIcon}>G</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.socialBtnIn} onPress={handleLinkedInLogin} disabled={loading}>
-                <Text style={styles.socialIcon}>in</Text>
-              </TouchableOpacity>
-            </View>
 
             {/* ── Skip ── */}
             <TouchableOpacity onPress={handleSkip}>
@@ -449,14 +348,10 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   inputFocused: { borderColor: TEAL, backgroundColor: "#fff" },
-  inputError:   { borderColor: "#FF4D4D", backgroundColor: "#fff9f9" },
-
   icon:      { fontSize: 16, marginRight: 10 },
   input:     { flex: 1, fontSize: 15, color: "#333" },
-  indicator: { fontSize: 14, marginLeft: 6 },
   eyeIcon:   { fontSize: 18, marginLeft: 6 },
 
-  errorMsg: { fontSize: 12, color: "#FF4D4D", marginBottom: 14, marginLeft: 4 },
   detectedText: { fontSize: 12, color: "#2A6A5F", marginBottom: 14, marginLeft: 4, fontWeight: "600" },
 
   forgotRow: { alignItems: "flex-end", marginTop: 4, marginBottom: 22 },
@@ -476,22 +371,5 @@ const styles = StyleSheet.create({
   loginBtnDisabled: { opacity: 0.6 },
   loginText: { color: "#fff", fontWeight: "700", fontSize: 16 },
 
-  divider: { flexDirection: "row", alignItems: "center", marginVertical: 24 },
-  divLine: { flex: 1, height: 1, backgroundColor: "#E0E0E0" },
-  divOr:   { marginHorizontal: 12, color: "#AAA", fontSize: 13 },
-
-  socialRow: { flexDirection: "row", justifyContent: "center", marginBottom: 24, gap: 20 },
-  socialBtnG: {
-    width: 50, height: 50, borderRadius: 25,
-    backgroundColor: "#F3F3F3",
-    justifyContent: "center", alignItems: "center",
-  },
-  socialBtnIn: {
-    width: 50, height: 50, borderRadius: 25,
-    backgroundColor: "#F3F3F3",
-    justifyContent: "center", alignItems: "center",
-  },
-  socialIcon: { fontSize: 18, fontWeight: "800", color: "#333" },
-
-  skip: { textAlign: "center", color: "#AAA", fontWeight: "600", fontSize: 14 },
+  skip: { textAlign: "center", color: "#AAA", fontWeight: "600", fontSize: 14, marginTop: 24 },
 });
