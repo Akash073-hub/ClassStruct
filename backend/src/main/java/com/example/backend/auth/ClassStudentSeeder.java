@@ -22,14 +22,21 @@ public class ClassStudentSeeder implements CommandLineRunner {
 
     private void seedTeacher() {
         String email = "teacher1@rvu.edu.in";
-        if (emailExists(email)) {
+        UserAccount existingTeacher = findByEmail(email);
+        if (existingTeacher != null) {
+            existingTeacher.setDisplayName("Teacher One");
+            existingTeacher.setUsername("TeacherOne");
+            existingTeacher.setPassword("teacher123");
+            existingTeacher.setRole("teacher");
+            existingTeacher.setPhone("9876543211");
+            userAccountRepository.save(existingTeacher);
             return;
         }
 
         userAccountRepository.save(new UserAccount(
                 "Teacher One",
                 email,
-                "teacher1",
+                "TeacherOne",
                 "teacher123",
                 "teacher",
                 null,
@@ -85,8 +92,14 @@ public class ClassStudentSeeder implements CommandLineRunner {
     }
 
     private boolean emailExists(String email) {
+        return findByEmail(email) != null;
+    }
+
+    private UserAccount findByEmail(String email) {
         return userAccountRepository.findAll().stream()
-                .anyMatch(user -> user.getEmail().equalsIgnoreCase(email));
+                .filter(user -> user.getEmail().equalsIgnoreCase(email))
+                .findFirst()
+                .orElse(null);
     }
 
     private UserAccount findByUsn(String usn) {

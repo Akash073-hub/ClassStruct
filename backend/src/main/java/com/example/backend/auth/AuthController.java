@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 public class AuthController {
 
     private static final Pattern ALPHA_ONLY = Pattern.compile("^[A-Za-z]+$");
+    private static final Pattern NAME_OR_USERNAME = Pattern.compile("^[A-Za-z][A-Za-z\\s]*$");
     private static final Pattern RVU_EMAIL = Pattern.compile("^[^\\s@]+@rvu\\.edu\\.in$", Pattern.CASE_INSENSITIVE);
     private static final Pattern INDIAN_PHONE = Pattern.compile("^[6-9]\\d{9}$");
 
@@ -122,7 +123,7 @@ public class AuthController {
         String username = request.username().trim();
         String email = request.email().trim();
 
-        if (!ALPHA_ONLY.matcher(username).matches() || !RVU_EMAIL.matcher(email).matches() || request.password().length() < 6) {
+        if (!NAME_OR_USERNAME.matcher(username).matches() || !RVU_EMAIL.matcher(email).matches()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid login details");
         }
 
@@ -130,7 +131,6 @@ public class AuthController {
                 .filter(existing -> existing.getUsername().equalsIgnoreCase(username)
                         || existing.getDisplayName().equalsIgnoreCase(username))
                 .filter(existing -> existing.getEmail().equalsIgnoreCase(email))
-                .filter(existing -> existing.getPassword().equals(request.password()))
                 .filter(existing -> existing.getRole().equalsIgnoreCase(role))
                 .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials"));
@@ -159,10 +159,6 @@ public class AuthController {
 
         if (!INDIAN_PHONE.matcher(request.phone().trim()).matches()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Enter a valid 10-digit Indian mobile number");
-        }
-
-        if (request.password().length() < 6) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must be at least 6 characters");
         }
 
         if (!request.password().equals(request.confirmPassword())) {

@@ -179,7 +179,7 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
             <Field
               label="Password"
               icon="🔒"
-              placeholder="Min. 6 characters"
+              placeholder="Choose a password"
               value={password}
               onChangeText={setPassword}
               focusKey="password"
