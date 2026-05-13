@@ -16,11 +16,6 @@ import {
 } from "react-native";
 import { authApi } from "../../services/authApi";
 
-// ── Validation ──────────────────────────────────────────────
-const isAlphaOnly = (v: string) => /^[A-Za-z]+$/.test(v);
-const isRvuEmail  = (v: string) => /^[^\s@]+@rvu\.edu\.in$/i.test(v);
-const isPhone     = (v: string) => /^[6-9]\d{9}$/.test(v);   // Indian mobile number
-
 type FieldProps = {
   label: string;
   icon: string;
@@ -31,7 +26,6 @@ type FieldProps = {
   keyboardType?: "default" | "email-address" | "phone-pad";
   secureTextEntry?: boolean;
   returnKeyType?: "next" | "done";
-  error?: string;
   rightElement?: React.ReactNode;
   onSubmitEditing?: () => void;
   maxLength?: number;
@@ -52,57 +46,11 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
   const [loading,    setLoading]    = useState(false);
   const [focused,    setFocused]    = useState("");
 
-  // touched flags — errors only appear after the field is blurred
-  const [t, setT] = useState({
-    fullName: false, username: false, email: false,
-    phone: false, password: false, confirm: false,
-  });
-  const touch = (field: string) => setT(prev => ({ ...prev, [field]: true }));
-
-  // ── Per-field errors ──
-  const errors = {
-    fullName: t.fullName && fullName.trim().length < 2
-      ? "Full name is required."
-      : "",
-    username: t.username && !isAlphaOnly(username)
-      ? username.length === 0 ? "Username is required." : "Only letters A–Z allowed."
-      : "",
-    email: t.email && !isRvuEmail(email)
-      ? email.length === 0 ? "College email is required." : "Must be a valid @rvu.edu.in address."
-      : "",
-    phone: t.phone && !isPhone(phone)
-      ? phone.length === 0 ? "Phone number is required." : "Enter a valid 10-digit Indian mobile number."
-      : "",
-    password: t.password && password.length < 6
-      ? password.length === 0 ? "Password is required." : "Minimum 6 characters."
-      : "",
-    confirm: t.confirm && confirm !== password
-      ? "Passwords do not match."
-      : "",
-  };
-
-
-
   // ── Handlers ──
-  const handleUsernameChange = (text: string) =>
-    setUsername(text.replace(/[^A-Za-z]/g, ""));
-
   const handlePhoneChange = (text: string) =>
     setPhone(text.replace(/[^0-9]/g, "").slice(0, 10));
 
   const handleRegister = async () => {
-    // Mark all fields touched to show any errors
-    setT({ fullName: true, username: true, email: true, phone: true, password: true, confirm: true });
-
-    if (
-      fullName.trim().length < 2 ||
-      !isAlphaOnly(username)     ||
-      !isRvuEmail(email)         ||
-      !isPhone(phone)            ||
-      password.length < 6        ||
-      confirm !== password
-    ) return;
-
     setLoading(true);
     try {
       await authApi.register({
@@ -130,7 +78,7 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
   const Field = ({
     label, icon, placeholder, value, onChangeText, focusKey,
     keyboardType = "default", secureTextEntry = false,
-    returnKeyType = "next", error = "",
+    returnKeyType = "next",
     rightElement = null,
     onSubmitEditing,
     maxLength,
@@ -140,7 +88,6 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
       <View style={[
         styles.inputBox,
         focused === focusKey  && styles.inputFocused,
-        !!error               && styles.inputError,
       ]}>
         <Text style={styles.icon}>{icon}</Text>
         <TextInput
@@ -156,12 +103,11 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
           returnKeyType={returnKeyType}
           maxLength={maxLength}
           onFocus={() => setFocused(focusKey)}
-          onBlur={() => { setFocused(""); touch(focusKey); }}
+          onBlur={() => setFocused("")}
           onSubmitEditing={onSubmitEditing}
         />
         {rightElement}
       </View>
-      {!!error && <Text style={styles.errorMsg}>⚠ {error}</Text>}
     </>
   );
 
@@ -194,7 +140,6 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
               value={fullName}
               onChangeText={setFullName}
               focusKey="fullName"
-              error={errors.fullName}
             />
 
             {/* ── FIELD 2: Username (letters only) ── */}
@@ -203,14 +148,8 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
               icon="👤"
               placeholder="e.g. DanishSir  (letters only)"
               value={username}
-              onChangeText={handleUsernameChange}
+              onChangeText={setUsername}
               focusKey="username"
-              error={errors.username}
-              rightElement={
-                username.length > 0
-                  ? <Text style={styles.indicator}>{isAlphaOnly(username) ? "✅" : "❌"}</Text>
-                  : null
-              }
             />
 
             {/* ── FIELD 3: College Email ── */}
@@ -222,12 +161,6 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
               onChangeText={setEmail}
               focusKey="email"
               keyboardType="email-address"
-              error={errors.email}
-              rightElement={
-                email.length > 0
-                  ? <Text style={styles.indicator}>{isRvuEmail(email) ? "✅" : "❌"}</Text>
-                  : null
-              }
             />
 
             {/* ── FIELD 4: Phone ── */}
@@ -240,12 +173,6 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
               focusKey="phone"
               keyboardType="phone-pad"
               maxLength={10}
-              error={errors.phone}
-              rightElement={
-                phone.length > 0
-                  ? <Text style={styles.indicator}>{isPhone(phone) ? "✅" : "❌"}</Text>
-                  : null
-              }
             />
 
             {/* ── FIELD 5: Password ── */}
@@ -257,7 +184,6 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
               onChangeText={setPassword}
               focusKey="password"
               secureTextEntry={!showPass}
-              error={errors.password}
               rightElement={
                 <TouchableOpacity onPress={() => setShowPass(!showPass)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
                   <Text style={styles.eyeIcon}>{showPass ? "👁️" : "👁️‍🗨️"}</Text>
@@ -276,7 +202,6 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
               secureTextEntry={!showConf}
               returnKeyType="done"
               onSubmitEditing={handleRegister}
-              error={errors.confirm}
               rightElement={
                 <TouchableOpacity onPress={() => setShowConf(!showConf)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
                   <Text style={styles.eyeIcon}>{showConf ? "👁️" : "👁️‍🗨️"}</Text>
@@ -358,14 +283,10 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   inputFocused: { borderColor: TEAL, backgroundColor: "#fff" },
-  inputError:   { borderColor: "#FF4D4D", backgroundColor: "#fff9f9" },
 
   icon:      { fontSize: 16, marginRight: 10 },
   input:     { flex: 1, fontSize: 15, color: "#333" },
-  indicator: { fontSize: 14, marginLeft: 6 },
   eyeIcon:   { fontSize: 18, marginLeft: 6 },
-
-  errorMsg: { fontSize: 12, color: "#FF4D4D", marginBottom: 12, marginLeft: 4 },
 
   registerBtn: {
     backgroundColor: DARK,

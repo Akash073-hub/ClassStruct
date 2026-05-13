@@ -76,17 +76,4 @@ export const authApi = {
       body: JSON.stringify(payload),
     });
   },
-
-  socialLogin(payload: {
-    provider: "google" | "linkedin";
-    email: string;
-    name?: string;
-    role: Role;
-    token?: string;
-  }) {
-    return request<AuthUser>("/api/auth/social-login", {
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
-  },
 };
