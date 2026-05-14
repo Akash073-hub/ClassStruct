@@ -6,44 +6,29 @@ export default function GlassBackdrop() {
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="none">
       <LinearGradient
-        colors={["#0F1A2E", "#1F3C6D", "#3B6A8F", "#7FA7A2"]}
+        colors={["#2A3FA8", "#5A49C7", "#9A56C9", "#E56FAF"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={StyleSheet.absoluteFill}
       />
-      <View style={styles.orbTop} />
-      <View style={styles.orbRight} />
-      <View style={styles.orbBottom} />
+      <LinearGradient
+        colors={["rgba(255,255,255,0.18)", "rgba(255,255,255,0)"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0.8, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
+      <LinearGradient
+        colors={["rgba(111,225,255,0.26)", "rgba(111,225,255,0)"]}
+        start={{ x: 1, y: 0 }}
+        end={{ x: 0.1, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
+      <LinearGradient
+        colors={["rgba(255,187,117,0.22)", "rgba(255,187,117,0)"]}
+        start={{ x: 0.15, y: 1 }}
+        end={{ x: 1, y: 0.25 }}
+        style={StyleSheet.absoluteFill}
+      />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  orbTop: {
-    position: "absolute",
-    top: -80,
-    left: -30,
-    width: 230,
-    height: 230,
-    borderRadius: 115,
-    backgroundColor: "rgba(255,255,255,0.14)",
-  },
-  orbRight: {
-    position: "absolute",
-    top: 170,
-    right: -70,
-    width: 250,
-    height: 250,
-    borderRadius: 125,
-    backgroundColor: "rgba(190,225,255,0.18)",
-  },
-  orbBottom: {
-    position: "absolute",
-    bottom: -110,
-    left: 30,
-    width: 280,
-    height: 280,
-    borderRadius: 140,
-    backgroundColor: "rgba(255,226,186,0.16)",
-  },
-});

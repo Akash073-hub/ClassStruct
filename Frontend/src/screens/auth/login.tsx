@@ -100,11 +100,6 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
     }
   };
 
-  const handleSkip = () => {
-    if (navigation?.canGoBack()) navigation.goBack();
-    else navigation.reset({ index: 0, routes: [{ name: "PreLogin" }] });
-  };
-
   const handleCreateNew = () => {
     navigation.navigate("CreateNew");
   };
@@ -148,7 +143,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
             {/* ── Title ── */}
             <Text style={styles.title}>Hey,{"\n"}Login Now.</Text>
             <Text style={styles.subtitle}>
-              {role === "student" ? "If you are new / " : "Sign in as a Teacher / "}
+              {role === "student" ? "If you are new / " : "Teacher ID format: name@rvu.edu.in / "}
               {role === "student" && (
                 <Text style={styles.link} onPress={handleCreateNew}>Create New</Text>
               )}
@@ -168,12 +163,12 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
               focused === "user" && styles.inputFocused,
             ]}>
               <Text style={styles.icon}>ID</Text>
-              <TextInput
-                style={styles.input}
-                placeholder={role === "student" ? "e.g. Akash Ramachandra Bhat" : "e.g. Teacher One"}
-                placeholderTextColor="#BABABA"
-                value={username}
-                onChangeText={setUsername}
+                <TextInput
+                  style={styles.input}
+                  placeholder={role === "student" ? "e.g. Akash Ramachandra Bhat" : "e.g. Prof. K Sarath"}
+                  placeholderTextColor="#BABABA"
+                  value={username}
+                  onChangeText={setUsername}
                 autoCapitalize="none"
                 autoCorrect={false}
                 keyboardType="default"
@@ -190,12 +185,12 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
               focused === "email" && styles.inputFocused,
             ]}>
               <Text style={styles.icon}>@</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="yourname@rvu.edu.in"
-                placeholderTextColor="#BABABA"
-                value={email}
-                onChangeText={setEmail}
+                <TextInput
+                  style={styles.input}
+                  placeholder={role === "teacher" ? "e.g. ksarath@rvu.edu.in" : "yourname@rvu.edu.in"}
+                  placeholderTextColor="#BABABA"
+                  value={email}
+                  onChangeText={setEmail}
                 autoCapitalize="none"
                 autoCorrect={false}
                 keyboardType="email-address"
@@ -255,11 +250,6 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
               }
             </TouchableOpacity>
 
-            {/* ── Skip ── */}
-            <TouchableOpacity onPress={handleSkip}>
-              <Text style={styles.skip}>Skip Now</Text>
-            </TouchableOpacity>
-
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -270,7 +260,6 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
 // ─────────────────────────────────────────────
 //  STYLES
 // ─────────────────────────────────────────────
-const TEAL = "#8BBDB3";
 const DARK = "#1e2235";
 
 const styles = StyleSheet.create({
@@ -381,6 +370,4 @@ const styles = StyleSheet.create({
   },
   loginBtnDisabled: { opacity: 0.6 },
   loginText: { color: "#F7FAFF", fontWeight: "700", fontSize: 16 },
-
-  skip: { textAlign: "center", color: "rgba(255,255,255,0.72)", fontWeight: "600", fontSize: 14, marginTop: 24 },
 });

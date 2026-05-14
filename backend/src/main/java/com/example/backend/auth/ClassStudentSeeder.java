@@ -16,32 +16,40 @@ public class ClassStudentSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        seedTeacher();
+        seedTeachers();
         seedStudents();
     }
 
-    private void seedTeacher() {
-        String email = "teacher1@rvu.edu.in";
-        UserAccount existingTeacher = findByEmail(email);
-        if (existingTeacher != null) {
-            existingTeacher.setDisplayName("Teacher One");
-            existingTeacher.setUsername("TeacherOne");
-            existingTeacher.setPassword("teacher123");
-            existingTeacher.setRole("teacher");
-            existingTeacher.setPhone("9876543211");
-            userAccountRepository.save(existingTeacher);
-            return;
-        }
+    private void seedTeachers() {
+        for (TeacherSeed teacher : teachers()) {
+            TeacherIdentity identity = identityForTeacher(teacher.displayName());
 
-        userAccountRepository.save(new UserAccount(
-                "Teacher One",
-                email,
-                "TeacherOne",
-                "teacher123",
-                "teacher",
-                null,
-                "9876543211"
-        ));
+            UserAccount existingTeacher = findByEmail(identity.email());
+            if (existingTeacher == null) {
+                existingTeacher = findByUsername(identity.username());
+            }
+
+            if (existingTeacher != null) {
+                existingTeacher.setDisplayName(teacher.displayName());
+                existingTeacher.setEmail(identity.email());
+                existingTeacher.setUsername(identity.username());
+                existingTeacher.setPassword("teacher123");
+                existingTeacher.setRole("teacher");
+                existingTeacher.setPhone(teacher.phone());
+                userAccountRepository.save(existingTeacher);
+                continue;
+            }
+
+            userAccountRepository.save(new UserAccount(
+                    teacher.displayName(),
+                    identity.email(),
+                    identity.username(),
+                    "teacher123",
+                    "teacher",
+                    null,
+                    teacher.phone()
+            ));
+        }
     }
 
     private void seedStudents() {
@@ -102,6 +110,13 @@ public class ClassStudentSeeder implements CommandLineRunner {
                 .orElse(null);
     }
 
+    private UserAccount findByUsername(String username) {
+        return userAccountRepository.findAll().stream()
+                .filter(user -> user.getUsername().equalsIgnoreCase(username))
+                .findFirst()
+                .orElse(null);
+    }
+
     private UserAccount findByUsn(String usn) {
         return userAccountRepository.findAll().stream()
                 .filter(user -> user.getUsn() != null && user.getUsn().equalsIgnoreCase(usn))
@@ -122,6 +137,31 @@ public class ClassStudentSeeder implements CommandLineRunner {
             current = current / 26 - 1;
         } while (current >= 0);
         return value.toString();
+    }
+
+    private TeacherIdentity identityForTeacher(String displayName) {
+        String compact = displayName
+                .replaceFirst("(?i)^(prof\\.?|dr\\.?)\\s*", "")
+                .replaceAll("[^A-Za-z]", "");
+
+        if (compact.isBlank()) {
+            compact = "Teacher";
+        }
+
+        String username = Character.toUpperCase(compact.charAt(0)) + compact.substring(1);
+        String email = compact.toLowerCase() + "@rvu.edu.in";
+        return new TeacherIdentity(username, email);
+    }
+
+    private List<TeacherSeed> teachers() {
+        return List.of(
+                new TeacherSeed("Teacher One", "9876543211"),
+                new TeacherSeed("Prof. Sasikala J", "9876543212"),
+                new TeacherSeed("Prof. K Sarath", "9876543213"),
+                new TeacherSeed("Prof. Mohammed Danish", "9876543214"),
+                new TeacherSeed("Dr. Manish Kumar", "9876543215"),
+                new TeacherSeed("Prof. Sharath BR", "9876543216")
+        );
     }
 
     private List<StudentSeed> students() {
@@ -192,5 +232,11 @@ public class ClassStudentSeeder implements CommandLineRunner {
     }
 
     private record StudentSeed(String usn, String name) {
+    }
+
+    private record TeacherSeed(String displayName, String phone) {
+    }
+
+    private record TeacherIdentity(String username, String email) {
     }
 }
