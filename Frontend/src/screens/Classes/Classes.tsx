@@ -10,16 +10,9 @@ import {
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../../../App";
+import RVLogo from "../../components/RVLogo";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Classes">;
-
-type Day = { day: string; date: number };
-const DAYS: Day[] = [
-  { day: "MON", date: 12 },
-  { day: "TUE", date: 13 },
-  { day: "WED", date: 14 },
-  { day: "THU", date: 15 },
-];
 
 type ClassItem = {
   id: string;
@@ -32,66 +25,323 @@ type ClassItem = {
   teacher: string;
 };
 
-const CLASSES: ClassItem[] = [
+type ScheduleDay = {
+  id: string;
+  day: string;
+  date: string;
+  title: string;
+  subtitle: string;
+  noClasses?: boolean;
+  classes: ClassItem[];
+};
+
+const regularBadge = {
+  statusColor: "#E8F0FF",
+  statusText: "#2F52E0",
+};
+
+const examBadge = {
+  statusColor: "#FFF4E5",
+  statusText: "#B45309",
+};
+
+const SCHEDULE_DAYS: ScheduleDay[] = [
   {
-    id: "1",
-    status: "ONGOING",
-    statusColor: "#E8F0FF",
-    statusText: "#2F52E0",
-    time: "09:00 - 10:30",
-    title: "Probability",
-    room: "F block, 002",
-    teacher: "Dr. Sasikala",
+    id: "may-15",
+    day: "FRI",
+    date: "15",
+    title: "MAD Paper",
+    subtitle: "Mobile Application Development exam tomorrow. Regular classes are cancelled.",
+    noClasses: true,
+    classes: [
+      {
+        id: "mad-paper",
+        status: "EXAM",
+        ...examBadge,
+        time: "Tomorrow, May 15",
+        title: "Mobile Application Development",
+        room: "As per exam seating",
+        teacher: "Prof. Mohammed Danish / Prof. Sharath BR",
+      },
+    ],
   },
   {
-    id: "2",
-    status: "NEXT UP",
-    statusColor: "#E8F0FF",
-    statusText: "#2F52E0",
-    time: "11:00 - 12:30",
-    title: "Agile",
-    room: "F block, 002",
-    teacher: "Dr. Manish Kumar",
+    id: "may-23",
+    day: "SAT",
+    date: "23",
+    title: "IKS Paper",
+    subtitle: "Indian Knowledge Systems exam day. No regular classes.",
+    noClasses: true,
+    classes: [
+      {
+        id: "iks-paper",
+        status: "EXAM",
+        ...examBadge,
+        time: "May 23",
+        title: "IKS",
+        room: "As per exam seating",
+        teacher: "Exam cell",
+      },
+    ],
   },
   {
-    id: "3",
-    status: "AFTERNOON",
-    statusColor: "#F0F0F0",
-    statusText: "#888",
-    time: "13:30 - 15:00",
-    title: "AI",
-    room: "C block, 501",
-    teacher: "Dr. Baishali ",
+    id: "may-25",
+    day: "MON",
+    date: "25",
+    title: "Minor 1",
+    subtitle: "Minor 1 exam day. Classes will not be conducted.",
+    noClasses: true,
+    classes: [],
   },
   {
-    id: "4",
-    status: "FINAL SESSION",
-    statusColor: "#F0F0F0",
-    statusText: "#888",
-    time: "15:30 - 17:00",
-    title: "UHV",
-    room: "Seminar Room 3",
-    teacher: "Prof. Sharath",
+    id: "may-26",
+    day: "TUE",
+    date: "26",
+    title: "University Elective 2",
+    subtitle: "Elective exam day. Classes will not be conducted.",
+    noClasses: true,
+    classes: [],
+  },
+  {
+    id: "may-27",
+    day: "WED",
+    date: "27",
+    title: "Minor 2",
+    subtitle: "Minor 2 exam day. Classes will not be conducted.",
+    noClasses: true,
+    classes: [],
+  },
+  {
+    id: "mon",
+    day: "MON",
+    date: "TT",
+    title: "Monday Timetable",
+    subtitle: "Classrooms C404/C405, Lab C504",
+    classes: [
+      {
+        id: "mon-mad-lab",
+        status: "LAB",
+        ...regularBadge,
+        time: "09:10 - 11:10",
+        title: "MAD Lab",
+        room: "C504",
+        teacher: "Prof. Mohammed Danish / Prof. Sharath BR",
+      },
+      {
+        id: "mon-math",
+        status: "CORE",
+        ...regularBadge,
+        time: "11:10 - 12:10",
+        title: "Mathematics",
+        room: "C404",
+        teacher: "Prof. Sasikala J",
+      },
+      {
+        id: "mon-minor",
+        status: "MINOR",
+        statusColor: "#F3F4F6",
+        statusText: "#4B5563",
+        time: "02:50 - 03:50",
+        title: "Minor",
+        room: "Minor stream room",
+        teacher: "Minor faculty",
+      },
+    ],
+  },
+  {
+    id: "tue",
+    day: "TUE",
+    date: "TT",
+    title: "Tuesday Timetable",
+    subtitle: "Classrooms C404/C405, Lab C504",
+    classes: [
+      {
+        id: "tue-agile-lab",
+        status: "LAB",
+        ...regularBadge,
+        time: "09:10 - 11:10",
+        title: "Agile Lab",
+        room: "C404",
+        teacher: "Dr. Manish Kumar / Prof. Sharath BR",
+      },
+      {
+        id: "tue-ai",
+        status: "CORE",
+        ...regularBadge,
+        time: "11:10 - 12:10",
+        title: "Fundamentals of AI",
+        room: "C404",
+        teacher: "Prof. K Sarath",
+      },
+      {
+        id: "tue-uhv",
+        status: "SEC",
+        statusColor: "#FFF4E5",
+        statusText: "#B45309",
+        time: "12:10 - 01:10",
+        title: "Universal Human Values",
+        room: "C404",
+        teacher: "Prof. Sharath BR",
+      },
+      {
+        id: "tue-minor",
+        status: "MINOR",
+        statusColor: "#F3F4F6",
+        statusText: "#4B5563",
+        time: "02:50 - 03:50",
+        title: "Minor",
+        room: "Minor stream room",
+        teacher: "Minor faculty",
+      },
+    ],
+  },
+  {
+    id: "wed",
+    day: "WED",
+    date: "TT",
+    title: "Wednesday Timetable",
+    subtitle: "Classrooms C404/C405, Lab C504",
+    classes: [
+      {
+        id: "wed-agile",
+        status: "CORE",
+        ...regularBadge,
+        time: "09:10 - 10:10",
+        title: "Agile Software Engineering",
+        room: "C405",
+        teacher: "Dr. Manish Kumar",
+      },
+      {
+        id: "wed-math",
+        status: "CORE",
+        ...regularBadge,
+        time: "10:10 - 11:10",
+        title: "Mathematics",
+        room: "C405",
+        teacher: "Prof. Sasikala J",
+      },
+      {
+        id: "wed-ai-lab",
+        status: "LAB",
+        ...regularBadge,
+        time: "11:10 - 01:10",
+        title: "AI Lab",
+        room: "C504",
+        teacher: "Prof. K Sarath / Prof. Sharath BR",
+      },
+      {
+        id: "wed-elective",
+        status: "ELECTIVE",
+        statusColor: "#F0E9FF",
+        statusText: "#6D28D9",
+        time: "01:50 - 03:50",
+        title: "University Elective 2",
+        room: "As allotted",
+        teacher: "Elective faculty",
+      },
+    ],
+  },
+  {
+    id: "thu",
+    day: "THU",
+    date: "TT",
+    title: "Thursday Timetable",
+    subtitle: "Classrooms C404/C405, Lab C504",
+    classes: [
+      {
+        id: "thu-mad-1",
+        status: "CORE",
+        ...regularBadge,
+        time: "09:10 - 10:10",
+        title: "Mobile Application Development",
+        room: "C404",
+        teacher: "Prof. Mohammed Danish",
+      },
+      {
+        id: "thu-mad-2",
+        status: "CORE",
+        ...regularBadge,
+        time: "10:10 - 11:10",
+        title: "Mobile Application Development",
+        room: "C404",
+        teacher: "Prof. Mohammed Danish",
+      },
+      {
+        id: "thu-uhv",
+        status: "SEC",
+        statusColor: "#FFF4E5",
+        statusText: "#B45309",
+        time: "11:10 - 12:10",
+        title: "Universal Human Values",
+        room: "C404",
+        teacher: "Prof. Sharath BR",
+      },
+      {
+        id: "thu-minor",
+        status: "MINOR",
+        statusColor: "#F3F4F6",
+        statusText: "#4B5563",
+        time: "02:50 - 03:50",
+        title: "Minor",
+        room: "Minor stream room",
+        teacher: "Minor faculty",
+      },
+    ],
+  },
+  {
+    id: "fri",
+    day: "FRI",
+    date: "TT",
+    title: "Friday Timetable",
+    subtitle: "Classrooms C404/C405, Lab C504",
+    classes: [
+      {
+        id: "fri-ai",
+        status: "CORE",
+        ...regularBadge,
+        time: "09:10 - 10:10",
+        title: "Fundamentals of AI",
+        room: "C405",
+        teacher: "Prof. K Sarath",
+      },
+      {
+        id: "fri-agile",
+        status: "CORE",
+        ...regularBadge,
+        time: "10:10 - 11:10",
+        title: "Agile Software Engineering",
+        room: "C405",
+        teacher: "Dr. Manish Kumar",
+      },
+      {
+        id: "fri-mentor",
+        status: "MENTOR",
+        statusColor: "#EAFBF2",
+        statusText: "#047857",
+        time: "11:10 - 12:10",
+        title: "Mentor Hour",
+        room: "C404",
+        teacher: "Class mentor",
+      },
+    ],
   },
 ];
 
 export default function ClassesScreen({ navigation }: Props) {
   const [selectedDay, setSelectedDay] = useState(0);
+  const selectedSchedule = SCHEDULE_DAYS[selectedDay];
+  const hasClasses = selectedSchedule.classes.length > 0;
 
   return (
     <SafeAreaView style={styles.safe}>
       <StatusBar barStyle="dark-content" backgroundColor="#F4F6FB" />
 
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <View style={styles.logoCircle}>
-            <Text style={styles.logoEmoji}>🎓</Text>
-          </View>
-          <Text style={styles.logoText}>StudentLink</Text>
-        </View>
-        <TouchableOpacity>
-          <Text style={styles.searchIcon}>🔍</Text>
+        <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+          <Text style={styles.backArrow}>‹</Text>
         </TouchableOpacity>
+        <RVLogo compact />
+        <View style={styles.headerSpacer} />
       </View>
 
       <ScrollView
@@ -99,13 +349,17 @@ export default function ClassesScreen({ navigation }: Props) {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.title}>My Class Schedule</Text>
-        <Text style={styles.subtitle}>You have {CLASSES.length} classes today, Alex.</Text>
+        <Text style={styles.title}>BCA 4th Sem Schedule</Text>
+        <Text style={styles.subtitle}>Classrooms C404/C405 • Lab C504</Text>
 
-        <View style={styles.dayRow}>
-          {DAYS.map((d, i) => (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.dayRow}
+        >
+          {SCHEDULE_DAYS.map((d, i) => (
             <TouchableOpacity
-              key={`${d.day}-${d.date}`}
+              key={d.id}
               style={[styles.dayBox, selectedDay === i && styles.dayBoxActive]}
               onPress={() => setSelectedDay(i)}
             >
@@ -117,72 +371,69 @@ export default function ClassesScreen({ navigation }: Props) {
               </Text>
             </TouchableOpacity>
           ))}
+        </ScrollView>
+
+        <View style={[styles.noticeCard, selectedSchedule.noClasses && styles.examNotice]}>
+          <Text style={styles.noticeTitle}>{selectedSchedule.title}</Text>
+          <Text style={styles.noticeText}>{selectedSchedule.subtitle}</Text>
+          {selectedSchedule.noClasses && (
+            <Text style={styles.noClassText}>No regular classes on this date.</Text>
+          )}
         </View>
 
         <View style={styles.timeline}>
-          {CLASSES.map((cls, index) => (
-            <View key={cls.id} style={styles.timelineRow}>
-              <View style={styles.timelineDotCol}>
-                <View style={[styles.dot, index === 0 && styles.dotActive]} />
-                {index < CLASSES.length - 1 && <View style={styles.line} />}
-              </View>
-
-              <View style={styles.classCard}>
-                <View style={styles.cardTop}>
-                  <View style={[styles.badge, { backgroundColor: cls.statusColor }]}>
-                    <Text style={[styles.badgeText, { color: cls.statusText }]}>{cls.status}</Text>
-                  </View>
-                  <Text style={styles.timeText}>{cls.time}</Text>
+          {hasClasses ? (
+            selectedSchedule.classes.map((cls, index) => (
+              <View key={cls.id} style={styles.timelineRow}>
+                <View style={styles.timelineDotCol}>
+                  <View style={[styles.dot, index === 0 && styles.dotActive]} />
+                  {index < selectedSchedule.classes.length - 1 && <View style={styles.line} />}
                 </View>
 
-                <Text style={styles.classTitle}>{cls.title}</Text>
-
-                <View style={styles.cardMeta}>
-                  <View style={styles.metaItem}>
-                    <Text style={styles.metaIcon}>📍</Text>
-                    <Text style={styles.metaText}>{cls.room}</Text>
+                <View style={styles.classCard}>
+                  <View style={styles.cardTop}>
+                    <View style={[styles.badge, { backgroundColor: cls.statusColor }]}>
+                      <Text style={[styles.badgeText, { color: cls.statusText }]}>{cls.status}</Text>
+                    </View>
+                    <Text style={styles.timeText}>{cls.time}</Text>
                   </View>
-                  <View style={styles.metaItem}>
-                    <Text style={styles.metaIcon}>👤</Text>
-                    <Text style={styles.metaText}>{cls.teacher}</Text>
+
+                  <Text style={styles.classTitle}>{cls.title}</Text>
+
+                  <View style={styles.cardMeta}>
+                    <View style={styles.metaItem}>
+                      <Text style={styles.metaIcon}>Room</Text>
+                      <Text style={styles.metaText}>{cls.room}</Text>
+                    </View>
+                    <View style={styles.metaItem}>
+                      <Text style={styles.metaIcon}>By</Text>
+                      <Text style={styles.metaText}>{cls.teacher}</Text>
+                    </View>
                   </View>
                 </View>
               </View>
+            ))
+          ) : (
+            <View style={styles.emptyCard}>
+              <Text style={styles.emptyTitle}>Classes removed from schedule</Text>
+              <Text style={styles.emptyText}>
+                Use this slot for exam preparation and seating updates.
+              </Text>
             </View>
-          ))}
+          )}
         </View>
 
-        <View style={styles.lunchRow}>
-          <Text style={styles.lunchIcon}>🍴</Text>
-          <Text style={styles.lunchText}>Lunch Break & Campus Lounge (1 Hour)</Text>
-        </View>
+        {!selectedSchedule.noClasses && (
+          <View style={styles.lunchRow}>
+            <Text style={styles.lunchText}>Break: 01:10 - 01:50 PM</Text>
+          </View>
+        )}
 
         <View style={styles.weeklyCard}>
-          <Text style={styles.weeklyTitle}>Weekly Load</Text>
+          <Text style={styles.weeklyTitle}>Exam Week Plan</Text>
           <Text style={styles.weeklySubtitle}>
-            You've completed 12 hours of lectures this week. 8 hours remaining.
+            May 15 MAD, May 23 IKS, May 25 Minor 1, May 26 Elective, May 27 Minor 2.
           </Text>
-          <View style={styles.progressBarBg}>
-            <View style={[styles.progressBarFill, { width: "60%" }]} />
-          </View>
-        </View>
-
-        <View style={styles.studyCard}>
-          <View>
-            <Text style={styles.studyTitle}>Study Group</Text>
-            <Text style={styles.studySubtitle}>Design Review at 17:30</Text>
-          </View>
-          <View style={styles.avatarStack}>
-            <View style={[styles.avatarCircle, { backgroundColor: "#FFB3A7", zIndex: 3, left: 0 }]}>
-              <Text style={styles.avatarText}>A</Text>
-            </View>
-            <View style={[styles.avatarCircle, { backgroundColor: "#A7C4FF", zIndex: 2, left: 20 }]}>
-              <Text style={styles.avatarText}>B</Text>
-            </View>
-            <View style={[styles.avatarCircle, { backgroundColor: "#B2F0B2", zIndex: 1, left: 40 }]}>
-              <Text style={styles.avatarText}>+3</Text>
-            </View>
-          </View>
         </View>
 
         <View style={{ height: 100 }} />
@@ -190,15 +441,15 @@ export default function ClassesScreen({ navigation }: Props) {
 
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home")}>
-          <Text style={styles.navIcon}>🏠</Text>
+          <Text style={styles.navIcon}>HM</Text>
           <Text style={styles.navLabel}>Home</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Teachers")}>
-          <Text style={styles.navIcon}>👨‍🏫</Text>
+          <Text style={styles.navIcon}>TR</Text>
           <Text style={styles.navLabel}>Teachers</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIconActive}>📅</Text>
+          <Text style={styles.navIconActive}>SC</Text>
           <Text style={styles.navLabelActive}>Schedule</Text>
         </TouchableOpacity>
       </View>
@@ -218,29 +469,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingVertical: 14,
     backgroundColor: "#F4F6FB",
   },
-  headerLeft: { flexDirection: "row", alignItems: "center", gap: 8 },
-  logoCircle: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: "#FFD6B0",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  logoEmoji: { fontSize: 16 },
-  logoText: { fontSize: 18, fontWeight: "800", color: BLUE },
-  searchIcon: { fontSize: 18 },
+  backBtn: { width: 38, height: 38, justifyContent: "center", alignItems: "center" },
+  backArrow: { fontSize: 32, color: DARK, lineHeight: 36, fontWeight: "300" },
+  headerSpacer: { width: 38 },
 
   title: { fontSize: 26, fontWeight: "800", color: DARK, marginBottom: 4 },
-  subtitle: { fontSize: 14, color: "#888", marginBottom: 24 },
+  subtitle: { fontSize: 14, color: "#888", marginBottom: 20 },
 
-  dayRow: { flexDirection: "row", gap: 10, marginBottom: 28 },
+  dayRow: { gap: 10, paddingBottom: 20 },
   dayBox: {
-    flex: 1,
+    width: 66,
     alignItems: "center",
     paddingVertical: 12,
     borderRadius: 16,
@@ -256,6 +498,19 @@ const styles = StyleSheet.create({
   dayLabelActive: { color: "rgba(255,255,255,0.8)" },
   dayDate: { fontSize: 18, fontWeight: "800", color: DARK },
   dayDateActive: { color: "#fff" },
+
+  noticeCard: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 16,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#E6E8EE",
+  },
+  examNotice: { backgroundColor: "#FFF8ED", borderColor: "#F4C57B" },
+  noticeTitle: { fontSize: 18, fontWeight: "800", color: DARK, marginBottom: 6 },
+  noticeText: { fontSize: 13, color: "#666", lineHeight: 19 },
+  noClassText: { fontSize: 13, color: "#B45309", fontWeight: "800", marginTop: 10 },
 
   timeline: { marginBottom: 8 },
   timelineRow: { flexDirection: "row", marginBottom: 16 },
@@ -280,15 +535,27 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 8,
+    gap: 10,
   },
   badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
   badgeText: { fontSize: 11, fontWeight: "800" },
-  timeText: { fontSize: 12, color: "#888", fontWeight: "700" },
+  timeText: { fontSize: 12, color: "#888", fontWeight: "700", flexShrink: 1 },
   classTitle: { fontSize: 16, fontWeight: "800", color: DARK, marginBottom: 10 },
   cardMeta: { gap: 8 },
   metaItem: { flexDirection: "row", alignItems: "center" },
-  metaIcon: { marginRight: 8 },
-  metaText: { fontSize: 13, color: "#666", fontWeight: "600" },
+  metaIcon: { marginRight: 8, width: 38, fontSize: 11, fontWeight: "900", color: "#98A2B3" },
+  metaText: { fontSize: 13, color: "#666", fontWeight: "600", flex: 1 },
+
+  emptyCard: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 18,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#E6E8EE",
+  },
+  emptyTitle: { fontSize: 16, fontWeight: "800", color: DARK, marginBottom: 6 },
+  emptyText: { fontSize: 13, color: "#666", lineHeight: 19 },
 
   lunchRow: {
     flexDirection: "row",
@@ -299,48 +566,16 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 14,
   },
-  lunchIcon: { fontSize: 18, marginRight: 10 },
   lunchText: { fontSize: 13, color: "#777", fontWeight: "700" },
 
   weeklyCard: {
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 18,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  weeklyTitle: { fontSize: 16, fontWeight: "800", color: DARK, marginBottom: 6 },
-  weeklySubtitle: { fontSize: 13, color: "#888", marginBottom: 12, lineHeight: 18 },
-  progressBarBg: { height: 10, borderRadius: 10, backgroundColor: "#E8E8E8", overflow: "hidden" },
-  progressBarFill: { height: 10, borderRadius: 10, backgroundColor: BLUE },
-
-  studyCard: {
     backgroundColor: DARK,
     borderRadius: 20,
     padding: 18,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    marginBottom: 16,
   },
-  studyTitle: { fontSize: 16, fontWeight: "800", color: "#fff", marginBottom: 4 },
-  studySubtitle: { fontSize: 13, color: "rgba(255,255,255,0.7)", fontWeight: "600" },
-
-  avatarStack: { width: 80, height: 34, position: "relative" },
-  avatarCircle: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    position: "absolute",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: DARK,
-  },
-  avatarText: { fontSize: 12, fontWeight: "800", color: "#111" },
+  weeklyTitle: { fontSize: 16, fontWeight: "800", color: "#fff", marginBottom: 6 },
+  weeklySubtitle: { fontSize: 13, color: "rgba(255,255,255,0.78)", lineHeight: 19 },
 
   bottomNav: {
     position: "absolute",
@@ -358,8 +593,8 @@ const styles = StyleSheet.create({
     elevation: 20,
   },
   navItem: { alignItems: "center", flex: 1 },
-  navIcon: { fontSize: 20, marginBottom: 2, opacity: 0.4 },
-  navIconActive: { fontSize: 20, marginBottom: 2 },
+  navIcon: { fontSize: 11, marginBottom: 3, opacity: 0.45, fontWeight: "900" },
+  navIconActive: { fontSize: 11, marginBottom: 3, fontWeight: "900", color: BLUE },
   navLabel: { fontSize: 11, color: "#ADADAD", fontWeight: "500" },
   navLabelActive: { fontSize: 11, color: BLUE, fontWeight: "700" },
 });

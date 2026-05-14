@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../../../App";
+import RVLogo from "../../components/RVLogo";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Teachers">;
 
@@ -26,42 +27,42 @@ type Teacher = {
 const TEACHERS: Teacher[] = [
   {
     id: "1",
-    name: "Maneesh Rajan",
-    subject: "DSA, Computer Networks",
-    tags: ["CSE", "CORE SUBJECTS"],
-    avatar: "MR",
+    name: "Prof. Sasikala J",
+    subject: "Probability Theory, Mathematics",
+    tags: ["SK", "2 HOURS"],
+    avatar: "SK",
     avatarBg: "#FFD6B0",
   },
   {
     id: "2",
-    name: "Durgarao",
-    subject: "Data Analytics with Python",
-    tags: ["CSE", "ANALYTICS"],
-    avatar: "DR",
+    name: "Prof. K Sarath",
+    subject: "Fundamentals of AI",
+    tags: ["KS", "4 HOURS"],
+    avatar: "KS",
     avatarBg: "#B0D6FF",
   },
   {
     id: "3",
-    name: "M. Danish",
-    subject: "App Development",
-    tags: ["CSE", "MOBILE DEV"],
+    name: "Prof. Mohammed Danish",
+    subject: "Mobile Application Development",
+    tags: ["MD", "4 HOURS"],
     avatar: "MD",
     avatarBg: "#FFB0C8",
   },
   {
     id: "4",
-    name: "Manish Kumar",
-    subject: "Digital Design, Java",
-    tags: ["CSE", "PROGRAMMING"],
+    name: "Dr. Manish Kumar",
+    subject: "Agile Software Engineering",
+    tags: ["MK", "4 HOURS"],
     avatar: "MK",
     avatarBg: "#C8B0FF",
   },
   {
     id: "5",
-    name: "Bharath",
-    subject: "Linux",
-    tags: ["CSE", "SYSTEMS"],
-    avatar: "BH",
+    name: "Prof. Sharath BR",
+    subject: "Universal Human Values, Labs",
+    tags: ["SH", "2 HOURS"],
+    avatar: "SH",
     avatarBg: "#FFE0B0",
   },
 ];
@@ -87,12 +88,10 @@ export default function TeachersScreen({ navigation }: Props) {
       <StatusBar barStyle="dark-content" backgroundColor="#F4F6FB" />
 
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <View style={styles.logoCircle}>
-            <Text style={styles.logoEmoji}>🎓</Text>
-          </View>
-          <Text style={styles.logoText}>StudentLink</Text>
-        </View>
+        <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+          <Text style={styles.backArrow}>‹</Text>
+        </TouchableOpacity>
+        <RVLogo compact />
         <TouchableOpacity>
           <Text style={styles.searchIcon}>🔍</Text>
         </TouchableOpacity>
@@ -141,11 +140,10 @@ export default function TeachersScreen({ navigation }: Props) {
         ))}
 
         <View style={styles.spotlightCard}>
-          <Text style={styles.spotlightLabel}>STAFF SPOTLIGHT</Text>
-          <Text style={styles.spotlightTitle}>Need help choosing a course?</Text>
+          <Text style={styles.spotlightLabel}>BCA 4TH SEM FACULTY</Text>
+          <Text style={styles.spotlightTitle}>Timetable teachers updated</Text>
           <Text style={styles.spotlightBody}>
-            Schedule a 1-on-1 consultation with our department heads to align
-            your academic path with your career goals.
+            These faculty names match the timetable: SK, KS, MK, MD, and SH.
           </Text>
           <TouchableOpacity style={styles.consultBtn}>
             <Text style={styles.consultBtnText}>Book Consultation</Text>
@@ -160,18 +158,18 @@ export default function TeachersScreen({ navigation }: Props) {
           style={styles.navItem}
           onPress={() => navigation.navigate("Home")}
         >
-          <Text style={styles.navIcon}>🏠</Text>
+          <Text style={styles.navIcon}>HM</Text>
           <Text style={styles.navLabel}>Home</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIconActive}>👨‍🏫</Text>
+          <Text style={styles.navIconActive}>TR</Text>
           <Text style={styles.navLabelActive}>Teachers</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navItem}
           onPress={() => navigation.navigate("Classes")}
         >
-          <Text style={styles.navIcon}>📅</Text>
+          <Text style={styles.navIcon}>SC</Text>
           <Text style={styles.navLabel}>Schedule</Text>
         </TouchableOpacity>
       </View>
@@ -192,17 +190,8 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     backgroundColor: "#F4F6FB",
   },
-  headerLeft: { flexDirection: "row", alignItems: "center", gap: 8 },
-  logoCircle: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: "#FFD6B0",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  logoEmoji: { fontSize: 16 },
-  logoText: { fontSize: 18, fontWeight: "800", color: BLUE },
+  backBtn: { width: 38, height: 38, justifyContent: "center", alignItems: "center" },
+  backArrow: { fontSize: 32, color: DARK, lineHeight: 36, fontWeight: "300" },
   searchIcon: { fontSize: 18 },
 
   title: { fontSize: 26, fontWeight: "800", color: DARK, marginBottom: 4 },
@@ -326,8 +315,8 @@ const styles = StyleSheet.create({
     elevation: 20,
   },
   navItem: { alignItems: "center", flex: 1 },
-  navIcon: { fontSize: 20, marginBottom: 2, opacity: 0.4 },
-  navIconActive: { fontSize: 20, marginBottom: 2 },
+  navIcon: { fontSize: 11, marginBottom: 3, opacity: 0.45, fontWeight: "900" },
+  navIconActive: { fontSize: 11, marginBottom: 3, fontWeight: "900", color: BLUE },
   navLabel: { fontSize: 11, color: "#ADADAD", fontWeight: "500" },
   navLabelActive: { fontSize: 11, color: BLUE, fontWeight: "700" },
 });

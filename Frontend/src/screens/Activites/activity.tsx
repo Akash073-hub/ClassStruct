@@ -10,26 +10,26 @@ type Props = NativeStackScreenProps<AuthStackParamList, "Activities">;
 
 const ACTIVITIES = [
   {
-    id: "1", emoji: "🧠", bg: "#DDEEFF", title: "UX Design Workshop",
+    id: "1", code: "UX", bg: "#DDEEFF", title: "UX Design Workshop",
     meta: "🕑 Today, 2:00 PM • 2h", tag: "JOINABLE",
     tagColor: "#22C55E", tagBg: "#DCFCE7", participants: "+12",
     action: "Register", actionStyle: "filled",
   },
   {
-    id: "2", emoji: "📖", bg: "#FFF3DC", title: "CS301 Group Study",
-    meta: "📍 Main Library, Floor 3", tag: "FILLING UP",
+    id: "2", code: "CS", bg: "#FFF3DC", title: "CS301 Group Study",
+    meta: "Main Library, Floor 3", tag: "FILLING UP",
     tagColor: "#F59E0B", tagBg: "#FEF3C7", participants: "+2",
     action: "Join", actionStyle: "filled",
   },
   {
-    id: "3", emoji: "💻", bg: "#EDE9FF", title: "Python Hackathon",
+    id: "3", code: "PY", bg: "#EDE9FF", title: "Python Hackathon",
     meta: "🕑 Sep 15, 9:00 AM • 8h", tag: "TOMORROW",
     tagColor: "#6366F1", tagBg: "#EDE9FF", participants: "+45",
     action: "Details", actionStyle: "outline",
   },
   {
-    id: "4", emoji: "⚽", bg: "#D1FAE5", title: "Friendly Football",
-    meta: "📍 Campus Sports Field", tag: "OPEN",
+    id: "4", code: "SP", bg: "#D1FAE5", title: "Friendly Football",
+    meta: "Campus Sports Field", tag: "OPEN",
     tagColor: "#22C55E", tagBg: "#DCFCE7", participants: "+8",
     action: "Join", actionStyle: "filled",
   },
@@ -51,6 +51,9 @@ export default function ActivitiesScreen({ navigation }: Props) {
 
         {/* Header */}
         <View style={styles.header}>
+          <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+            <Text style={styles.backArrow}>‹</Text>
+          </TouchableOpacity>
           <View>
             <Text style={styles.title}>Activities</Text>
             <Text style={styles.subtitle}>Find your next event</Text>
@@ -76,7 +79,7 @@ export default function ActivitiesScreen({ navigation }: Props) {
         {filtered.map((item) => (
           <View key={item.id} style={styles.card}>
             <View style={[styles.iconBox, { backgroundColor: item.bg }]}>
-              <Text style={styles.iconEmoji}>{item.emoji}</Text>
+              <Text style={styles.iconCode}>{item.code}</Text>
             </View>
             <View style={styles.cardBody}>
               <View style={styles.cardTop}>
@@ -108,22 +111,22 @@ export default function ActivitiesScreen({ navigation }: Props) {
       {/* Bottom Nav */}
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.goBack()}>
-          <Text style={styles.navIcon}>🏠</Text>
+          <Text style={styles.navIcon}>HM</Text>
           <Text style={styles.navLabel}>Home</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIconActive}>📅</Text>
+          <Text style={styles.navIconActive}>AC</Text>
           <Text style={styles.navLabelActive}>Activities</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.fab}>
           <Text style={styles.fabPlus}>+</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIcon}>👥</Text>
+          <Text style={styles.navIcon}>NW</Text>
           <Text style={styles.navLabel}>Network</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profile")}>
-          <Text style={styles.navIcon}>👤</Text>
+          <Text style={styles.navIcon}>ME</Text>
           <Text style={styles.navLabel}>Profile</Text>
         </TouchableOpacity>
       </View>
@@ -136,6 +139,8 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   content: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 20 },
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 },
+  backBtn: { width: 38, height: 38, justifyContent: "center", alignItems: "center", marginRight: 8 },
+  backArrow: { fontSize: 32, color: DARK, lineHeight: 36, fontWeight: "300" },
   title: { fontSize: 28, fontWeight: "800", color: DARK },
   subtitle: { fontSize: 14, color: "#ADADAD", marginTop: 2 },
   filterBtn: { width: 42, height: 42, borderRadius: 21, backgroundColor: "#fff", justifyContent: "center", alignItems: "center", shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.07, shadowRadius: 6, elevation: 3 },
@@ -145,7 +150,7 @@ const styles = StyleSheet.create({
   searchInput: { flex: 1, fontSize: 15, color: DARK },
   card: { flexDirection: "row", backgroundColor: "#fff", borderRadius: 20, padding: 16, marginBottom: 14, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2, alignItems: "flex-start" },
   iconBox: { width: 54, height: 54, borderRadius: 16, justifyContent: "center", alignItems: "center", marginRight: 14, flexShrink: 0 },
-  iconEmoji: { fontSize: 24 },
+  iconCode: { fontSize: 12, fontWeight: "900", color: DARK },
   cardBody: { flex: 1 },
   cardTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 },
   cardTitle: { fontSize: 16, fontWeight: "800", color: DARK, flex: 1, marginRight: 8 },
@@ -164,8 +169,8 @@ const styles = StyleSheet.create({
   actionTextOutline: { color: BLUE },
   bottomNav: { flexDirection: "row", alignItems: "center", justifyContent: "space-around", backgroundColor: "#fff", paddingTop: 10, paddingBottom: 14, borderTopWidth: 1, borderTopColor: "#EEE", elevation: 10 },
   navItem: { alignItems: "center", flex: 1 },
-  navIcon: { fontSize: 20, marginBottom: 2, opacity: 0.45 },
-  navIconActive: { fontSize: 20, marginBottom: 2 },
+  navIcon: { fontSize: 11, marginBottom: 3, opacity: 0.45, fontWeight: "900" },
+  navIconActive: { fontSize: 11, marginBottom: 3, fontWeight: "900", color: BLUE },
   navLabel: { fontSize: 11, color: "#ADADAD", fontWeight: "500" },
   navLabelActive: { fontSize: 11, color: BLUE, fontWeight: "700" },
   fab: { width: 56, height: 56, borderRadius: 28, backgroundColor: BLUE, justifyContent: "center", alignItems: "center", marginBottom: 10, shadowColor: BLUE, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8, elevation: 8 },

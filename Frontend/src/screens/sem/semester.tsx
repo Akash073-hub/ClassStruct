@@ -14,14 +14,14 @@ import type { AuthStackParamList } from "../../../App";
 type Props = NativeStackScreenProps<AuthStackParamList, "Semester">;
 
 const SEMESTERS = [
-  { id: "1", label: "1st Sem", icon: "🎓", iconBg: "#E8EDFF" },
-  { id: "2", label: "2nd Sem", icon: "📐", iconBg: "#F0EAFF" },
-  { id: "3", label: "3rd Sem", icon: "🖥️", iconBg: "#2F52E0" },
-  { id: "4", label: "4th Sem", icon: "🗄️", iconBg: "#E6F9F0" },
-  { id: "5", label: "5th Sem", icon: "🌐", iconBg: "#FFF3E8" },
-  { id: "6", label: "6th Sem", icon: "☁️", iconBg: "#FFE8E8" },
-  { id: "7", label: "7th Sem", icon: "🔬", iconBg: "#FFFBE6" },
-  { id: "8", label: "8th Sem", icon: "🏅", iconBg: "#E6FFF8" },
+  { id: "1", label: "1st Sem", icon: "S1", iconBg: "#E8EDFF" },
+  { id: "2", label: "2nd Sem", icon: "S2", iconBg: "#F0EAFF" },
+  { id: "3", label: "3rd Sem", icon: "S3", iconBg: "#2F52E0" },
+  { id: "4", label: "4th Sem", icon: "S4", iconBg: "#E6F9F0" },
+  { id: "5", label: "5th Sem", icon: "S5", iconBg: "#FFF3E8" },
+  { id: "6", label: "6th Sem", icon: "S6", iconBg: "#FFE8E8" },
+  { id: "7", label: "7th Sem", icon: "S7", iconBg: "#FFFBE6" },
+  { id: "8", label: "8th Sem", icon: "S8", iconBg: "#E6FFF8" },
 ];
 
 const SEMESTER_STATS: Record<string, { attendance: number; cgpa: number }> = {
@@ -89,7 +89,9 @@ export default function SemesterScreen({ navigation }: Props) {
                     { backgroundColor: isSelected ? "rgba(255,255,255,0.25)" : sem.iconBg },
                   ]}
                 >
-                  <Text style={styles.iconEmoji}>{sem.icon}</Text>
+                  <Text style={[styles.iconEmoji, isSelected && styles.iconEmojiSelected]}>
+                    {sem.icon}
+                  </Text>
                 </View>
                 <Text style={[styles.semLabel, isSelected && styles.semLabelSelected]}>
                   Semester
@@ -130,22 +132,22 @@ export default function SemesterScreen({ navigation }: Props) {
       {/* Bottom Nav */}
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.goBack()}>
-          <Text style={styles.navIconActive}>🏠</Text>
+          <Text style={styles.navIconActive}>HM</Text>
           <Text style={styles.navLabelActive}>Home</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIcon}>👥</Text>
+          <Text style={styles.navIcon}>NW</Text>
           <Text style={styles.navLabel}>Network</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.fab}>
           <Text style={styles.fabPlus}>+</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Updates")}>
-          <Text style={styles.navIcon}>🔔</Text>
+          <Text style={styles.navIcon}>UP</Text>
           <Text style={styles.navLabel}>Updates</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profile")}>
-          <Text style={styles.navIcon}>👤</Text>
+          <Text style={styles.navIcon}>ME</Text>
           <Text style={styles.navLabel}>Profile</Text>
         </TouchableOpacity>
       </View>
@@ -223,7 +225,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 14,
   },
-  iconEmoji: { fontSize: 24 },
+  iconEmoji: { fontSize: 12, fontWeight: "900", color: DARK },
+  iconEmojiSelected: { color: "#fff" },
   semLabel: { fontSize: 12, color: "#ADADAD", fontWeight: "500", marginBottom: 2 },
   semLabelSelected: { color: "rgba(255,255,255,0.75)" },
   semName: { fontSize: 18, fontWeight: "800", color: DARK },
@@ -269,8 +272,8 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   navItem: { alignItems: "center", flex: 1 },
-  navIcon: { fontSize: 20, marginBottom: 2, opacity: 0.45 },
-  navIconActive: { fontSize: 20, marginBottom: 2 },
+  navIcon: { fontSize: 11, marginBottom: 3, opacity: 0.45, fontWeight: "900" },
+  navIconActive: { fontSize: 11, marginBottom: 3, fontWeight: "900", color: BLUE },
   navLabel: { fontSize: 11, color: "#ADADAD", fontWeight: "500" },
   navLabelActive: { fontSize: 11, color: BLUE, fontWeight: "700" },
   fab: {
