@@ -5,11 +5,12 @@ import type { AuthStackParamList } from "../../../App";
 
 type Props = {
   navigation: NativeStackNavigationProp<AuthStackParamList, "Home">;
-  route?: { params?: { role?: string; name?: string; email?: string } };
+  route?: { params?: { role?: "teacher" | "student"; name?: string; username?: string; email?: string } };
 };
 
 export default function HomeScreen({ navigation, route }: Props) {
-  const { name = "Student", email = "" } = route?.params ?? {};
+  const { role = "student", name = "Student", username = "", email = "" } = route?.params ?? {};
+  const userInfo = { role, name, username, email };
   const [searchText, setSearchText] = useState("");
   const progress = 0.75;
   const currentWeek = 12;
@@ -139,7 +140,7 @@ export default function HomeScreen({ navigation, route }: Props) {
           <Text style={styles.navIcon}>🔔</Text>
           <Text style={styles.navLabel}>Updates</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profile")}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profile", userInfo)}>
           <Text style={styles.navIcon}>👤</Text>
           <Text style={styles.navLabel}>Profile</Text>
         </TouchableOpacity>
