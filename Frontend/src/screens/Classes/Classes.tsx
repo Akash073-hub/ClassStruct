@@ -11,6 +11,7 @@ import {
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../../../App";
 import RVLogo from "../../components/RVLogo";
+import GlassBackdrop from "../../components/GlassBackdrop";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Classes">;
 
@@ -334,7 +335,8 @@ export default function ClassesScreen({ navigation }: Props) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F4F6FB" />
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+      <GlassBackdrop />
 
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
@@ -457,11 +459,11 @@ export default function ClassesScreen({ navigation }: Props) {
   );
 }
 
-const BLUE = "#2F52E0";
-const DARK = "#1A1A2E";
+const BLUE = "#86D2FF";
+const DARK = "#F7FAFF";
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#F4F6FB" },
+  safe: { flex: 1, backgroundColor: "#0F1A2E" },
   scroll: { flex: 1 },
   content: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 120 },
 
@@ -471,14 +473,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: "#F4F6FB",
+    backgroundColor: "transparent",
   },
   backBtn: { width: 38, height: 38, justifyContent: "center", alignItems: "center" },
   backArrow: { fontSize: 32, color: DARK, lineHeight: 36, fontWeight: "300" },
   headerSpacer: { width: 38 },
 
   title: { fontSize: 26, fontWeight: "800", color: DARK, marginBottom: 4 },
-  subtitle: { fontSize: 14, color: "#888", marginBottom: 20 },
+  subtitle: { fontSize: 14, color: "rgba(247,250,255,0.84)", marginBottom: 20 },
 
   dayRow: { gap: 10, paddingBottom: 20 },
   dayBox: {
@@ -486,7 +488,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 12,
     borderRadius: 16,
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(255,255,255,0.16)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.28)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
@@ -500,16 +504,16 @@ const styles = StyleSheet.create({
   dayDateActive: { color: "#fff" },
 
   noticeCard: {
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(255,255,255,0.18)",
     borderRadius: 20,
     padding: 16,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: "#E6E8EE",
+    borderColor: "rgba(255,255,255,0.28)",
   },
   examNotice: { backgroundColor: "#FFF8ED", borderColor: "#F4C57B" },
   noticeTitle: { fontSize: 18, fontWeight: "800", color: DARK, marginBottom: 6 },
-  noticeText: { fontSize: 13, color: "#666", lineHeight: 19 },
+  noticeText: { fontSize: 13, color: "rgba(247,250,255,0.85)", lineHeight: 19 },
   noClassText: { fontSize: 13, color: "#B45309", fontWeight: "800", marginTop: 10 },
 
   timeline: { marginBottom: 8 },
@@ -521,7 +525,9 @@ const styles = StyleSheet.create({
 
   classCard: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(255,255,255,0.18)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.28)",
     borderRadius: 20,
     padding: 16,
     shadowColor: "#000",
@@ -539,37 +545,39 @@ const styles = StyleSheet.create({
   },
   badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
   badgeText: { fontSize: 11, fontWeight: "800" },
-  timeText: { fontSize: 12, color: "#888", fontWeight: "700", flexShrink: 1 },
+  timeText: { fontSize: 12, color: "rgba(247,250,255,0.82)", fontWeight: "700", flexShrink: 1 },
   classTitle: { fontSize: 16, fontWeight: "800", color: DARK, marginBottom: 10 },
   cardMeta: { gap: 8 },
   metaItem: { flexDirection: "row", alignItems: "center" },
   metaIcon: { marginRight: 8, width: 38, fontSize: 11, fontWeight: "900", color: "#98A2B3" },
-  metaText: { fontSize: 13, color: "#666", fontWeight: "600", flex: 1 },
+  metaText: { fontSize: 13, color: "rgba(247,250,255,0.86)", fontWeight: "600", flex: 1 },
 
   emptyCard: {
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(255,255,255,0.18)",
     borderRadius: 20,
     padding: 18,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: "#E6E8EE",
+    borderColor: "rgba(255,255,255,0.28)",
   },
   emptyTitle: { fontSize: 16, fontWeight: "800", color: DARK, marginBottom: 6 },
-  emptyText: { fontSize: 13, color: "#666", lineHeight: 19 },
+  emptyText: { fontSize: 13, color: "rgba(247,250,255,0.86)", lineHeight: 19 },
 
   lunchRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F0F0F0",
+    backgroundColor: "rgba(255,255,255,0.2)",
     borderRadius: 16,
     padding: 14,
     marginTop: 8,
     marginBottom: 14,
   },
-  lunchText: { fontSize: 13, color: "#777", fontWeight: "700" },
+  lunchText: { fontSize: 13, color: "rgba(247,250,255,0.88)", fontWeight: "700" },
 
   weeklyCard: {
-    backgroundColor: DARK,
+    backgroundColor: "rgba(16,28,44,0.6)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.25)",
     borderRadius: 20,
     padding: 18,
     marginBottom: 16,
@@ -585,16 +593,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(16,28,44,0.6)",
     paddingTop: 10,
     paddingBottom: 14,
     borderTopWidth: 1,
-    borderTopColor: "#EEE",
+    borderTopColor: "rgba(255,255,255,0.16)",
     elevation: 20,
   },
   navItem: { alignItems: "center", flex: 1 },
-  navIcon: { fontSize: 11, marginBottom: 3, opacity: 0.45, fontWeight: "900" },
-  navIconActive: { fontSize: 11, marginBottom: 3, fontWeight: "900", color: BLUE },
-  navLabel: { fontSize: 11, color: "#ADADAD", fontWeight: "500" },
-  navLabelActive: { fontSize: 11, color: BLUE, fontWeight: "700" },
+  navIcon: { fontSize: 11, marginBottom: 3, opacity: 0.8, fontWeight: "900", color: "rgba(255,255,255,0.86)" },
+  navIconActive: { fontSize: 11, marginBottom: 3, fontWeight: "900", color: "#EAF6FF" },
+  navLabel: { fontSize: 11, color: "rgba(255,255,255,0.82)", fontWeight: "500" },
+  navLabelActive: { fontSize: 11, color: "#EAF6FF", fontWeight: "700" },
 });

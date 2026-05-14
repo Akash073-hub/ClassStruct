@@ -12,11 +12,12 @@ import {
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../../../App";
 import { getCurrentUser } from "../../services/authSession";
+import GlassBackdrop from "../../components/GlassBackdrop";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Profile">;
 
-const BLUE = "#2F52E0";
-const DARK = "#1A1A2E";
+const BLUE = "#86D2FF";
+const DARK = "#F7FAFF";
 
 export default function ProfileScreen({ navigation, route }: Props) {
   const loginDetails = route.params ?? getCurrentUser();
@@ -58,7 +59,8 @@ export default function ProfileScreen({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F4F6FB" />
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+      <GlassBackdrop />
 
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
@@ -153,7 +155,7 @@ export default function ProfileScreen({ navigation, route }: Props) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#F4F6FB" },
+  safe: { flex: 1, backgroundColor: "#0F1A2E" },
   scroll: { flex: 1 },
   content: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 20 },
   header: {
@@ -162,14 +164,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: "#F4F6FB",
+    backgroundColor: "transparent",
   },
   backBtn: { width: 38, height: 38, justifyContent: "center", alignItems: "center" },
   backArrow: { fontSize: 32, color: DARK, lineHeight: 36, fontWeight: "300" },
   headerTitle: { fontSize: 20, fontWeight: "800", color: DARK },
   headerSpacer: { width: 38 },
   profileTopCard: {
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(255,255,255,0.18)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.28)",
     borderRadius: 20,
     alignItems: "center",
     paddingVertical: 20,
@@ -184,21 +188,23 @@ const styles = StyleSheet.create({
     width: 86,
     height: 86,
     borderRadius: 43,
-    backgroundColor: "#DDE6FF",
+    backgroundColor: "rgba(255,255,255,0.24)",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 12,
   },
   avatarText: { fontSize: 28, fontWeight: "800", color: BLUE },
   roleBadge: {
-    backgroundColor: "#EEF2FF",
+    backgroundColor: "rgba(255,255,255,0.18)",
     borderRadius: 30,
     paddingHorizontal: 14,
     paddingVertical: 8,
   },
   roleBadgeText: { color: BLUE, fontWeight: "700", fontSize: 13 },
   formCard: {
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(255,255,255,0.18)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.28)",
     borderRadius: 20,
     padding: 16,
     shadowColor: "#000",
@@ -207,20 +213,22 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
-  label: { fontSize: 13, fontWeight: "700", color: "#666", marginBottom: 8, marginTop: 8 },
+  label: { fontSize: 13, fontWeight: "700", color: "#EAF6FF", marginBottom: 8, marginTop: 8 },
   input: {
     borderWidth: 1,
-    borderColor: "#E6E8EE",
+    borderColor: "rgba(255,255,255,0.32)",
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 15,
-    color: DARK,
-    backgroundColor: "#FBFCFF",
+    color: "#fff",
+    backgroundColor: "rgba(255,255,255,0.14)",
   },
   textArea: { minHeight: 88 },
   saveBtn: {
-    backgroundColor: BLUE,
+    backgroundColor: "rgba(134,210,255,0.38)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.4)",
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",

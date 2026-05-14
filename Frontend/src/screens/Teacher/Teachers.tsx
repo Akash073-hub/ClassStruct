@@ -12,6 +12,7 @@ import {
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../../../App";
 import RVLogo from "../../components/RVLogo";
+import GlassBackdrop from "../../components/GlassBackdrop";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Teachers">;
 
@@ -67,8 +68,8 @@ const TEACHERS: Teacher[] = [
   },
 ];
 
-const BLUE = "#2F52E0";
-const DARK = "#1A1A2E";
+const BLUE = "#86D2FF";
+const DARK = "#F7FAFF";
 
 export default function TeachersScreen({ navigation }: Props) {
   const [searchText, setSearchText] = useState("");
@@ -85,7 +86,8 @@ export default function TeachersScreen({ navigation }: Props) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F4F6FB" />
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+      <GlassBackdrop />
 
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
@@ -93,7 +95,7 @@ export default function TeachersScreen({ navigation }: Props) {
         </TouchableOpacity>
         <RVLogo compact />
         <TouchableOpacity>
-          <Text style={styles.searchIcon}>🔍</Text>
+          <Text style={styles.searchIcon}>SR</Text>
         </TouchableOpacity>
       </View>
 
@@ -109,7 +111,7 @@ export default function TeachersScreen({ navigation }: Props) {
         </Text>
 
         <View style={styles.searchBox}>
-          <Text style={styles.searchEmoji}>🔍</Text>
+          <Text style={styles.searchEmoji}>SR</Text>
           <TextInput
             style={styles.searchInput}
             placeholder="Search by name, subject, or department"
@@ -178,7 +180,7 @@ export default function TeachersScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#F4F6FB" },
+  safe: { flex: 1, backgroundColor: "#0F1A2E" },
   scroll: { flex: 1 },
   content: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 120 },
 
@@ -188,19 +190,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 14,
-    backgroundColor: "#F4F6FB",
+    backgroundColor: "transparent",
   },
   backBtn: { width: 38, height: 38, justifyContent: "center", alignItems: "center" },
   backArrow: { fontSize: 32, color: DARK, lineHeight: 36, fontWeight: "300" },
-  searchIcon: { fontSize: 18 },
+  searchIcon: { fontSize: 11, color: "#fff", fontWeight: "800" },
 
   title: { fontSize: 26, fontWeight: "800", color: DARK, marginBottom: 4 },
-  subtitle: { fontSize: 14, color: "#888", marginBottom: 20 },
+  subtitle: { fontSize: 14, color: "rgba(247,250,255,0.82)", marginBottom: 20 },
 
   searchBox: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(255,255,255,0.18)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.3)",
     borderRadius: 50,
     paddingHorizontal: 18,
     paddingVertical: 12,
@@ -211,11 +215,13 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 2,
   },
-  searchEmoji: { fontSize: 15, marginRight: 10 },
-  searchInput: { flex: 1, fontSize: 14, color: DARK },
+  searchEmoji: { fontSize: 11, marginRight: 10, color: "#fff", fontWeight: "800" },
+  searchInput: { flex: 1, fontSize: 14, color: "#fff" },
 
   teacherCard: {
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(255,255,255,0.18)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.28)",
     borderRadius: 24,
     padding: 20,
     alignItems: "center",
@@ -234,14 +240,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 12,
   },
-  avatarText: { fontSize: 22, fontWeight: "800", color: "#333" },
+  avatarText: { fontSize: 22, fontWeight: "800", color: "#16314D" },
   teacherName: {
     fontSize: 17,
     fontWeight: "800",
     color: DARK,
     marginBottom: 4,
   },
-  teacherSubject: { fontSize: 13, color: BLUE, marginBottom: 12 },
+  teacherSubject: { fontSize: 13, color: "rgba(247,250,255,0.9)", marginBottom: 12 },
   tagsRow: {
     flexDirection: "row",
     gap: 8,
@@ -250,33 +256,37 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   tag: {
-    backgroundColor: "#F0F0F0",
+    backgroundColor: "rgba(255,255,255,0.22)",
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 4,
   },
-  tagText: { fontSize: 11, fontWeight: "700", color: "#888" },
+  tagText: { fontSize: 11, fontWeight: "700", color: "rgba(247,250,255,0.86)" },
   profileBtn: {
-    backgroundColor: BLUE,
+    backgroundColor: "rgba(134,210,255,0.38)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.4)",
     borderRadius: 50,
     paddingVertical: 12,
     paddingHorizontal: 40,
     width: "100%",
     alignItems: "center",
   },
-  profileBtnText: { color: "#fff", fontSize: 15, fontWeight: "700" },
+  profileBtnText: { color: "#F7FAFF", fontSize: 15, fontWeight: "700" },
 
   spotlightCard: {
-    backgroundColor: DARK,
+    backgroundColor: "rgba(16,28,44,0.6)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.25)",
     borderRadius: 24,
     padding: 24,
     marginTop: 8,
   },
   spotlightLabel: {
     fontSize: 11,
-    color: "rgba(255,255,255,0.5)",
+    color: "rgba(255,255,255,0.72)",
     fontWeight: "700",
-    letterSpacing: 1.5,
+    letterSpacing: 0,
     marginBottom: 10,
   },
   spotlightTitle: {
@@ -287,17 +297,19 @@ const styles = StyleSheet.create({
   },
   spotlightBody: {
     fontSize: 13,
-    color: "rgba(255,255,255,0.7)",
+    color: "rgba(255,255,255,0.86)",
     lineHeight: 20,
     marginBottom: 20,
   },
   consultBtn: {
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(255,255,255,0.24)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.45)",
     borderRadius: 50,
     paddingVertical: 12,
     alignItems: "center",
   },
-  consultBtnText: { color: DARK, fontSize: 15, fontWeight: "700" },
+  consultBtnText: { color: "#F7FAFF", fontSize: 15, fontWeight: "700" },
 
   bottomNav: {
     position: "absolute",
@@ -307,16 +319,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(16,28,44,0.6)",
     paddingTop: 10,
     paddingBottom: 14,
     borderTopWidth: 1,
-    borderTopColor: "#EEE",
+    borderTopColor: "rgba(255,255,255,0.16)",
     elevation: 20,
   },
   navItem: { alignItems: "center", flex: 1 },
-  navIcon: { fontSize: 11, marginBottom: 3, opacity: 0.45, fontWeight: "900" },
-  navIconActive: { fontSize: 11, marginBottom: 3, fontWeight: "900", color: BLUE },
-  navLabel: { fontSize: 11, color: "#ADADAD", fontWeight: "500" },
-  navLabelActive: { fontSize: 11, color: BLUE, fontWeight: "700" },
+  navIcon: { fontSize: 11, marginBottom: 3, opacity: 0.8, fontWeight: "900", color: "rgba(255,255,255,0.86)" },
+  navIconActive: { fontSize: 11, marginBottom: 3, fontWeight: "900", color: "#EAF6FF" },
+  navLabel: { fontSize: 11, color: "rgba(255,255,255,0.82)", fontWeight: "500" },
+  navLabelActive: { fontSize: 11, color: "#EAF6FF", fontWeight: "700" },
 });
