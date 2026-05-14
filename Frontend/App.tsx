@@ -25,7 +25,9 @@ export type AuthStackParamList = {
   Semester: undefined;
   Classes: undefined;
   Teachers: undefined;
-  Profile: undefined;
+  Profile:
+    | { role?: 'teacher' | 'student'; name?: string; username?: string; email?: string }
+    | undefined;
   Updates: undefined;
 };
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -17,16 +17,36 @@ type Props = NativeStackScreenProps<AuthStackParamList, "Profile">;
 const BLUE = "#2F52E0";
 const DARK = "#1A1A2E";
 
-export default function ProfileScreen({ navigation }: Props) {
-  const [fullName, setFullName] = useState("Akash Kumar");
+export default function ProfileScreen({ navigation, route }: Props) {
+  const loginDetails = route.params;
+  const [fullName, setFullName] = useState(loginDetails?.name ?? "Student");
   const [bio, setBio] = useState(
     "CSE student passionate about AI, app dev, and building useful campus tools."
   );
-  const [email, setEmail] = useState("akash@student.edu");
+  const [email, setEmail] = useState(loginDetails?.email ?? "");
+  const [username, setUsername] = useState(loginDetails?.username ?? "");
+  const [role, setRole] = useState(loginDetails?.role ?? "student");
   const [phone, setPhone] = useState("+91 98765 43210");
   const [department, setDepartment] = useState("Computer Science & Engineering");
   const [section, setSection] = useState("CSE - B");
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!loginDetails) return;
+    setFullName(loginDetails.name ?? "Student");
+    setEmail(loginDetails.email ?? "");
+    setUsername(loginDetails.username ?? "");
+    setRole(loginDetails.role ?? "student");
+  }, [loginDetails]);
+
+  const initials = useMemo(() => {
+    const source = fullName.trim() || username.trim() || "Student";
+    return source
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((part) => part.charAt(0).toUpperCase())
+      .join("");
+  }, [fullName, username]);
 
   const handleSave = () => {
     setSaving(true);
@@ -41,7 +61,7 @@ export default function ProfileScreen({ navigation }: Props) {
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
           <Text style={styles.backArrow}>‹</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>My Profile</Text>
+        <Text style={styles.headerTitle}>About Information</Text>
         <View style={styles.headerSpacer} />
       </View>
 
@@ -52,11 +72,13 @@ export default function ProfileScreen({ navigation }: Props) {
       >
         <View style={styles.profileTopCard}>
           <View style={styles.avatarCircle}>
-            <Text style={styles.avatarText}>AK</Text>
+            <Text style={styles.avatarText}>{initials}</Text>
           </View>
-          <TouchableOpacity style={styles.changePhotoBtn}>
-            <Text style={styles.changePhotoText}>Change Photo</Text>
-          </TouchableOpacity>
+          <View style={styles.roleBadge}>
+            <Text style={styles.roleBadgeText}>
+              {role === "teacher" ? "Teacher Account" : "Student Account"}
+            </Text>
+          </View>
         </View>
 
         <View style={styles.formCard}>
@@ -79,6 +101,23 @@ export default function ProfileScreen({ navigation }: Props) {
             onChangeText={setEmail}
             keyboardType="email-address"
             autoCapitalize="none"
+          />
+
+          <Text style={styles.label}>Username</Text>
+          <TextInput
+            style={styles.input}
+            value={username}
+            onChangeText={setUsername}
+            autoCapitalize="none"
+          />
+
+          <Text style={styles.label}>Role</Text>
+          <TextInput
+            style={styles.input}
+            value={role === "teacher" ? "Teacher" : "Student"}
+            onChangeText={(value) =>
+              setRole(value.toLowerCase().includes("teacher") ? "teacher" : "student")
+            }
           />
 
           <Text style={styles.label}>Phone</Text>
@@ -148,13 +187,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   avatarText: { fontSize: 28, fontWeight: "800", color: BLUE },
-  changePhotoBtn: {
+  roleBadge: {
     backgroundColor: "#EEF2FF",
     borderRadius: 30,
     paddingHorizontal: 14,
     paddingVertical: 8,
   },
-  changePhotoText: { color: BLUE, fontWeight: "700", fontSize: 13 },
+  roleBadgeText: { color: BLUE, fontWeight: "700", fontSize: 13 },
   formCard: {
     backgroundColor: "#fff",
     borderRadius: 20,
