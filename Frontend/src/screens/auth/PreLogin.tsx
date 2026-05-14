@@ -8,6 +8,7 @@ import {
   StatusBar,
   SafeAreaView,
 } from "react-native";
+import RVLogo from "../../components/RVLogo";
 
 export default function PreLogin({ navigation }: { navigation?: any }) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -51,6 +52,7 @@ export default function PreLogin({ navigation }: { navigation?: any }) {
         />
         <View style={styles.imageTint} />
         <View style={styles.heroContent}>
+          <RVLogo light />
           <View style={styles.badge}>
             <Text style={styles.badgeText}>{slides[activeIndex].category}</Text>
           </View>

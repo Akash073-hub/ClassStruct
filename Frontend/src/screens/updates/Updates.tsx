@@ -19,27 +19,43 @@ const DARK = "#1A1A2E";
 const UPDATES = [
   {
     id: "1",
-    title: "Internal Exams Timetable Released",
-    message: "Check your semester section for complete exam schedule and room details.",
-    time: "2h ago",
-    tone: "#E8EDFF",
-    emoji: "📝",
+    title: "Tomorrow: MAD Paper",
+    message: "May 15 is Mobile Application Development. Regular classes are cancelled for the exam.",
+    time: "May 15",
+    tone: "#FFF4E5",
+    code: "MD",
   },
   {
     id: "2",
-    title: "Assignment Deadline Extended",
-    message: "Data Analytics with Python assignment submission moved to Friday.",
-    time: "5h ago",
-    tone: "#EAFBF2",
-    emoji: "⏳",
+    title: "IKS Paper",
+    message: "Indian Knowledge Systems exam is scheduled on May 23.",
+    time: "May 23",
+    tone: "#E8EDFF",
+    code: "IK",
   },
   {
     id: "3",
-    title: "Workshop: App Dev Sprint",
-    message: "Registration is now open. Limited seats available for this weekend.",
-    time: "1d ago",
-    tone: "#FFF4E8",
-    emoji: "📱",
+    title: "No Classes: Minor 1",
+    message: "May 25 is Minor 1 exam day. Classes will not be conducted.",
+    time: "May 25",
+    tone: "#EAFBF2",
+    code: "M1",
+  },
+  {
+    id: "4",
+    title: "No Classes: University Elective 2",
+    message: "May 26 is the University Elective 2 exam day.",
+    time: "May 26",
+    tone: "#F0E9FF",
+    code: "UE",
+  },
+  {
+    id: "5",
+    title: "No Classes: Minor 2",
+    message: "May 27 is Minor 2 exam day. Regular classes are removed from the schedule.",
+    time: "May 27",
+    tone: "#FFE8E8",
+    code: "M2",
   },
 ];
 
@@ -64,7 +80,7 @@ export default function UpdatesScreen({ navigation }: Props) {
         {UPDATES.map((item) => (
           <View key={item.id} style={styles.card}>
             <View style={[styles.iconBox, { backgroundColor: item.tone }]}>
-              <Text style={styles.iconText}>{item.emoji}</Text>
+              <Text style={styles.iconText}>{item.code}</Text>
             </View>
             <View style={styles.cardBody}>
               <Text style={styles.cardTitle}>{item.title}</Text>
@@ -79,19 +95,19 @@ export default function UpdatesScreen({ navigation }: Props) {
 
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home")}>
-          <Text style={styles.navIcon}>🏠</Text>
+          <Text style={styles.navIcon}>HM</Text>
           <Text style={styles.navLabel}>Home</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Activities")}>
-          <Text style={styles.navIcon}>📅</Text>
+          <Text style={styles.navIcon}>AC</Text>
           <Text style={styles.navLabel}>Activities</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIconActive}>🔔</Text>
+          <Text style={styles.navIconActive}>UP</Text>
           <Text style={styles.navLabelActive}>Updates</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profile")}>
-          <Text style={styles.navIcon}>👤</Text>
+          <Text style={styles.navIcon}>ME</Text>
           <Text style={styles.navLabel}>Profile</Text>
         </TouchableOpacity>
       </View>
@@ -135,7 +151,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginRight: 12,
   },
-  iconText: { fontSize: 22 },
+  iconText: { fontSize: 12, fontWeight: "900", color: DARK },
   cardBody: { flex: 1 },
   cardTitle: { fontSize: 15, fontWeight: "800", color: DARK, marginBottom: 4 },
   cardMessage: { fontSize: 13, color: "#666", lineHeight: 18, marginBottom: 8 },
@@ -153,8 +169,8 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   navItem: { alignItems: "center", flex: 1 },
-  navIcon: { fontSize: 20, marginBottom: 2, opacity: 0.45 },
-  navIconActive: { fontSize: 20, marginBottom: 2 },
+  navIcon: { fontSize: 11, marginBottom: 3, opacity: 0.45, fontWeight: "900" },
+  navIconActive: { fontSize: 11, marginBottom: 3, fontWeight: "900", color: BLUE },
   navLabel: { fontSize: 11, color: "#ADADAD", fontWeight: "500" },
   navLabelActive: { fontSize: 11, color: BLUE, fontWeight: "700" },
 });

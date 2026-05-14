@@ -16,6 +16,7 @@ import {
 } from "react-native";
 
 import { authApi, Role } from "../../services/authApi";
+import { setCurrentUser } from "../../services/authSession";
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
   const { width } = useWindowDimensions();
@@ -41,8 +42,10 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
     setDetectedName("");
   };
 
-  const goToHome = (user: { role: Role; name: string; username: string; email: string }) =>
+  const goToHome = (user: { role: Role; name: string; username: string; email: string }) => {
+    setCurrentUser(user);
     navigation.reset({ index: 0, routes: [{ name: "Home", params: user }] });
+  };
 
   const handleEmailBlur = async () => {
     setFocused("");

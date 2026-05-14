@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../../../App";
+import { getCurrentUser } from "../../services/authSession";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Profile">;
 
@@ -18,7 +19,7 @@ const BLUE = "#2F52E0";
 const DARK = "#1A1A2E";
 
 export default function ProfileScreen({ navigation, route }: Props) {
-  const loginDetails = route.params;
+  const loginDetails = route.params ?? getCurrentUser();
   const [fullName, setFullName] = useState(loginDetails?.name ?? "Student");
   const [bio, setBio] = useState(
     "CSE student passionate about AI, app dev, and building useful campus tools."
@@ -32,12 +33,14 @@ export default function ProfileScreen({ navigation, route }: Props) {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (!loginDetails) return;
+    const latestUser = route.params ?? getCurrentUser();
+    if (!latestUser) return;
+    const loginDetails = latestUser;
     setFullName(loginDetails.name ?? "Student");
     setEmail(loginDetails.email ?? "");
     setUsername(loginDetails.username ?? "");
     setRole(loginDetails.role ?? "student");
-  }, [loginDetails]);
+  }, [route.params]);
 
   const initials = useMemo(() => {
     const source = fullName.trim() || username.trim() || "Student";
