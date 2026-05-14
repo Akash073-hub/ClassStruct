@@ -5,13 +5,14 @@ import {
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../../../App";
+import GlassBackdrop from "../../components/GlassBackdrop";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Activities">;
 
 const ACTIVITIES = [
   {
     id: "1", code: "UX", bg: "#DDEEFF", title: "UX Design Workshop",
-    meta: "🕑 Today, 2:00 PM • 2h", tag: "JOINABLE",
+    meta: "Today, 2:00 PM • 2h", tag: "JOINABLE",
     tagColor: "#22C55E", tagBg: "#DCFCE7", participants: "+12",
     action: "Register", actionStyle: "filled",
   },
@@ -23,7 +24,7 @@ const ACTIVITIES = [
   },
   {
     id: "3", code: "PY", bg: "#EDE9FF", title: "Python Hackathon",
-    meta: "🕑 Sep 15, 9:00 AM • 8h", tag: "TOMORROW",
+    meta: "Sep 15, 9:00 AM • 8h", tag: "TOMORROW",
     tagColor: "#6366F1", tagBg: "#EDE9FF", participants: "+45",
     action: "Details", actionStyle: "outline",
   },
@@ -36,7 +37,7 @@ const ACTIVITIES = [
 ];
 
 const BLUE = "#2F52E0";
-const DARK = "#1A1A2E";
+const DARK = "#F7FAFF";
 
 export default function ActivitiesScreen({ navigation }: Props) {
   const [search, setSearch] = useState("");
@@ -46,7 +47,8 @@ export default function ActivitiesScreen({ navigation }: Props) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F4F6FB" />
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+      <GlassBackdrop />
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
         {/* Header */}
@@ -59,13 +61,13 @@ export default function ActivitiesScreen({ navigation }: Props) {
             <Text style={styles.subtitle}>Find your next event</Text>
           </View>
           <TouchableOpacity style={styles.filterBtn}>
-            <Text style={styles.filterIcon}>☰</Text>
+            <Text style={styles.filterIcon}>FL</Text>
           </TouchableOpacity>
         </View>
 
         {/* Search */}
         <View style={styles.searchBox}>
-          <Text style={styles.searchIcon}>🔍</Text>
+          <Text style={styles.searchIcon}>SR</Text>
           <TextInput
             style={styles.searchInput}
             placeholder="Search activities..."
@@ -135,44 +137,44 @@ export default function ActivitiesScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#F4F6FB" },
+  safe: { flex: 1, backgroundColor: "#0F1A2E" },
   scroll: { flex: 1 },
   content: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 20 },
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 },
   backBtn: { width: 38, height: 38, justifyContent: "center", alignItems: "center", marginRight: 8 },
   backArrow: { fontSize: 32, color: DARK, lineHeight: 36, fontWeight: "300" },
   title: { fontSize: 28, fontWeight: "800", color: DARK },
-  subtitle: { fontSize: 14, color: "#ADADAD", marginTop: 2 },
-  filterBtn: { width: 42, height: 42, borderRadius: 21, backgroundColor: "#fff", justifyContent: "center", alignItems: "center", shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.07, shadowRadius: 6, elevation: 3 },
-  filterIcon: { fontSize: 18 },
-  searchBox: { flexDirection: "row", alignItems: "center", backgroundColor: "#fff", borderRadius: 50, paddingHorizontal: 18, paddingVertical: 12, marginBottom: 20, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 6, elevation: 2 },
-  searchIcon: { fontSize: 16, marginRight: 10 },
-  searchInput: { flex: 1, fontSize: 15, color: DARK },
-  card: { flexDirection: "row", backgroundColor: "#fff", borderRadius: 20, padding: 16, marginBottom: 14, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2, alignItems: "flex-start" },
+  subtitle: { fontSize: 14, color: "rgba(247,250,255,0.82)", marginTop: 2 },
+  filterBtn: { width: 42, height: 42, borderRadius: 21, backgroundColor: "rgba(255,255,255,0.2)", borderWidth: 1, borderColor: "rgba(255,255,255,0.35)", justifyContent: "center", alignItems: "center" },
+  filterIcon: { fontSize: 11, color: "#fff", fontWeight: "800" },
+  searchBox: { flexDirection: "row", alignItems: "center", backgroundColor: "rgba(255,255,255,0.18)", borderRadius: 50, paddingHorizontal: 18, paddingVertical: 12, marginBottom: 20, borderWidth: 1, borderColor: "rgba(255,255,255,0.3)" },
+  searchIcon: { fontSize: 11, marginRight: 10, color: "#fff", fontWeight: "800" },
+  searchInput: { flex: 1, fontSize: 15, color: "#fff" },
+  card: { flexDirection: "row", backgroundColor: "rgba(255,255,255,0.18)", borderWidth: 1, borderColor: "rgba(255,255,255,0.28)", borderRadius: 20, padding: 16, marginBottom: 14, alignItems: "flex-start" },
   iconBox: { width: 54, height: 54, borderRadius: 16, justifyContent: "center", alignItems: "center", marginRight: 14, flexShrink: 0 },
-  iconCode: { fontSize: 12, fontWeight: "900", color: DARK },
+  iconCode: { fontSize: 12, fontWeight: "900", color: "#16314D" },
   cardBody: { flex: 1 },
   cardTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 },
   cardTitle: { fontSize: 16, fontWeight: "800", color: DARK, flex: 1, marginRight: 8 },
   tag: { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4, flexShrink: 0 },
   tagText: { fontSize: 11, fontWeight: "700", letterSpacing: 0.5 },
-  cardMeta: { fontSize: 13, color: "#888", marginBottom: 4 },
+  cardMeta: { fontSize: 13, color: "rgba(247,250,255,0.82)", marginBottom: 4 },
   cardBottom: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 10 },
   avatarRow: { flexDirection: "row", alignItems: "center" },
   miniAvatar: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: "#fff" },
-  participantCount: { marginLeft: 6, fontSize: 13, color: "#888", fontWeight: "600" },
+  participantCount: { marginLeft: 6, fontSize: 13, color: "rgba(247,250,255,0.88)", fontWeight: "600" },
   actionBtn: { paddingHorizontal: 22, paddingVertical: 9, borderRadius: 50 },
   actionFilled: { backgroundColor: BLUE },
   actionOutline: { borderWidth: 1.5, borderColor: BLUE },
   actionText: { fontSize: 14, fontWeight: "700" },
   actionTextFilled: { color: "#fff" },
   actionTextOutline: { color: BLUE },
-  bottomNav: { flexDirection: "row", alignItems: "center", justifyContent: "space-around", backgroundColor: "#fff", paddingTop: 10, paddingBottom: 14, borderTopWidth: 1, borderTopColor: "#EEE", elevation: 10 },
+  bottomNav: { flexDirection: "row", alignItems: "center", justifyContent: "space-around", backgroundColor: "rgba(16,28,44,0.6)", paddingTop: 10, paddingBottom: 14, borderTopWidth: 1, borderTopColor: "rgba(255,255,255,0.16)", elevation: 10 },
   navItem: { alignItems: "center", flex: 1 },
-  navIcon: { fontSize: 11, marginBottom: 3, opacity: 0.45, fontWeight: "900" },
-  navIconActive: { fontSize: 11, marginBottom: 3, fontWeight: "900", color: BLUE },
-  navLabel: { fontSize: 11, color: "#ADADAD", fontWeight: "500" },
-  navLabelActive: { fontSize: 11, color: BLUE, fontWeight: "700" },
-  fab: { width: 56, height: 56, borderRadius: 28, backgroundColor: BLUE, justifyContent: "center", alignItems: "center", marginBottom: 10, shadowColor: BLUE, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8, elevation: 8 },
+  navIcon: { fontSize: 11, marginBottom: 3, opacity: 0.8, fontWeight: "900", color: "rgba(255,255,255,0.86)" },
+  navIconActive: { fontSize: 11, marginBottom: 3, fontWeight: "900", color: "#EAF6FF" },
+  navLabel: { fontSize: 11, color: "rgba(255,255,255,0.82)", fontWeight: "500" },
+  navLabelActive: { fontSize: 11, color: "#EAF6FF", fontWeight: "700" },
+  fab: { width: 56, height: 56, borderRadius: 28, backgroundColor: "rgba(134,210,255,0.38)", borderWidth: 1, borderColor: "rgba(255,255,255,0.4)", justifyContent: "center", alignItems: "center", marginBottom: 10, shadowColor: BLUE, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8, elevation: 8 },
   fabPlus: { color: "#fff", fontSize: 30, fontWeight: "300", lineHeight: 34 },
 });

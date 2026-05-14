@@ -94,7 +94,7 @@ export default function PreLogin({ navigation }: { navigation?: any }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#8BBDB3",
+    backgroundColor: "#0F1A2E",
   },
 
   imageSection: {
@@ -166,7 +166,9 @@ const styles = StyleSheet.create({
 
   card: {
     width: "100%",
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(255,255,255,0.18)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.34)",
     borderRadius: 32,
     paddingHorizontal: 24,
     paddingTop: 30,
@@ -183,14 +185,14 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "800",
     marginBottom: 10,
-    color: "#1e2235",
+    color: "#F7FAFF",
     textAlign: "center",
     lineHeight: 38,
   },
 
   description: {
     fontSize: 14,
-    color: "#5f6672",
+    color: "rgba(247,250,255,0.86)",
     lineHeight: 21,
     marginBottom: 26,
     textAlign: "center",
@@ -206,17 +208,19 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 999,
-    backgroundColor: "#e0e0e0",
+    backgroundColor: "rgba(255,255,255,0.4)",
     marginHorizontal: 5,
   },
 
   activeDot: {
     width: 26,
-    backgroundColor: "#ff7a7a",
+    backgroundColor: "#DFF5FF",
   },
 
   nextBtn: {
-    backgroundColor: "#1e2235",
+    backgroundColor: "rgba(255,255,255,0.24)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.44)",
     paddingVertical: 15,
     paddingHorizontal: 48,
     borderRadius: 999,
@@ -225,7 +229,7 @@ const styles = StyleSheet.create({
   },
 
   nextText: {
-    color: "#fff",
+    color: "#F7FAFF",
     fontWeight: "700",
     fontSize: 16,
   },

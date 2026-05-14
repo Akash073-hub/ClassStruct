@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../../../App";
+import GlassBackdrop from "../../components/GlassBackdrop";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Semester">;
 
@@ -35,8 +36,8 @@ const SEMESTER_STATS: Record<string, { attendance: number; cgpa: number }> = {
   "8": { attendance: 93, cgpa: 8.9 },
 };
 
-const BLUE = "#2F52E0";
-const DARK = "#1A1A2E";
+const BLUE = "#86D2FF";
+const DARK = "#F7FAFF";
 
 export default function SemesterScreen({ navigation }: Props) {
   const [selected, setSelected] = useState("3");
@@ -45,7 +46,8 @@ export default function SemesterScreen({ navigation }: Props) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F4F6FB" />
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+      <GlassBackdrop />
 
       {/* Header */}
       <View style={styles.header}>
@@ -156,7 +158,7 @@ export default function SemesterScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#F4F6FB" },
+  safe: { flex: 1, backgroundColor: "#0F1A2E" },
   scroll: { flex: 1 },
   content: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 20 },
 
@@ -166,7 +168,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: "#F4F6FB",
+    backgroundColor: "transparent",
   },
   backBtn: { width: 38, height: 38, justifyContent: "center", alignItems: "center" },
   backArrow: { fontSize: 32, color: DARK, lineHeight: 36, fontWeight: "300" },
@@ -176,12 +178,12 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: 11,
     fontWeight: "700",
-    color: "#ADADAD",
+    color: "rgba(247,250,255,0.82)",
     letterSpacing: 1.5,
     marginBottom: 6,
     marginTop: 4,
   },
-  sectionSubtitle: { fontSize: 14, color: "#555", lineHeight: 21, marginBottom: 24 },
+  sectionSubtitle: { fontSize: 14, color: "rgba(247,250,255,0.84)", lineHeight: 21, marginBottom: 24 },
 
   grid: {
     flexDirection: "row",
@@ -192,7 +194,9 @@ const styles = StyleSheet.create({
   },
   card: {
     width: "47%",
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(255,255,255,0.18)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.28)",
     borderRadius: 20,
     paddingVertical: 24,
     paddingHorizontal: 16,
@@ -227,13 +231,15 @@ const styles = StyleSheet.create({
   },
   iconEmoji: { fontSize: 12, fontWeight: "900", color: DARK },
   iconEmojiSelected: { color: "#fff" },
-  semLabel: { fontSize: 12, color: "#ADADAD", fontWeight: "500", marginBottom: 2 },
+  semLabel: { fontSize: 12, color: "rgba(247,250,255,0.8)", fontWeight: "500", marginBottom: 2 },
   semLabelSelected: { color: "rgba(255,255,255,0.75)" },
   semName: { fontSize: 18, fontWeight: "800", color: DARK },
   semNameSelected: { color: "#fff" },
 
   overviewCard: {
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(255,255,255,0.18)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.28)",
     borderRadius: 20,
     padding: 18,
     marginBottom: 20,
@@ -247,40 +253,42 @@ const styles = StyleSheet.create({
   metricsRow: { flexDirection: "row", gap: 12 },
   metricBox: {
     flex: 1,
-    backgroundColor: "#F4F6FB",
+    backgroundColor: "rgba(255,255,255,0.2)",
     borderRadius: 14,
     paddingVertical: 12,
     paddingHorizontal: 14,
   },
-  metricLabel: { fontSize: 12, color: "#777", fontWeight: "600", marginBottom: 6 },
+  metricLabel: { fontSize: 12, color: "rgba(247,250,255,0.82)", fontWeight: "600", marginBottom: 6 },
   metricValue: { fontSize: 24, color: BLUE, fontWeight: "800" },
 
   helpRow: { alignItems: "center", paddingVertical: 10 },
-  helpText: { fontSize: 13, color: "#ADADAD", marginBottom: 4 },
-  helpLink: { fontSize: 14, color: BLUE, fontWeight: "700" },
+  helpText: { fontSize: 13, color: "rgba(247,250,255,0.78)", marginBottom: 4 },
+  helpLink: { fontSize: 14, color: "#EAF6FF", fontWeight: "700" },
   bottomSpacer: { height: 20 },
 
   bottomNav: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(16,28,44,0.6)",
     paddingTop: 10,
     paddingBottom: 14,
     borderTopWidth: 1,
-    borderTopColor: "#EEE",
+    borderTopColor: "rgba(255,255,255,0.16)",
     elevation: 10,
   },
   navItem: { alignItems: "center", flex: 1 },
-  navIcon: { fontSize: 11, marginBottom: 3, opacity: 0.45, fontWeight: "900" },
-  navIconActive: { fontSize: 11, marginBottom: 3, fontWeight: "900", color: BLUE },
-  navLabel: { fontSize: 11, color: "#ADADAD", fontWeight: "500" },
-  navLabelActive: { fontSize: 11, color: BLUE, fontWeight: "700" },
+  navIcon: { fontSize: 11, marginBottom: 3, opacity: 0.8, fontWeight: "900", color: "rgba(255,255,255,0.86)" },
+  navIconActive: { fontSize: 11, marginBottom: 3, fontWeight: "900", color: "#EAF6FF" },
+  navLabel: { fontSize: 11, color: "rgba(255,255,255,0.82)", fontWeight: "500" },
+  navLabelActive: { fontSize: 11, color: "#EAF6FF", fontWeight: "700" },
   fab: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: BLUE,
+    backgroundColor: "rgba(134,210,255,0.38)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.4)",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 10,

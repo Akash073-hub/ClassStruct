@@ -15,6 +15,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { authApi } from "../../services/authApi";
+import GlassBackdrop from "../../components/GlassBackdrop";
 
 type FieldProps = {
   label: string;
@@ -113,7 +114,8 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+      <GlassBackdrop />
       <KeyboardAvoidingView style={styles.kbView} behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <ScrollView
           contentContainerStyle={styles.scroll}
@@ -130,12 +132,12 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
 
             {/* ── Title ── */}
             <Text style={styles.title}>Create{"\n"}Account.</Text>
-            <Text style={styles.subtitle}>Join your college community 🎓</Text>
+            <Text style={styles.subtitle}>Join your college community</Text>
 
             {/* ── FIELD 1: Full Name ── */}
             <Field
               label="Full Name"
-              icon="🙍"
+              icon="NM"
               placeholder="e.g. Danish sir"
               value={fullName}
               onChangeText={setFullName}
@@ -145,7 +147,7 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
             {/* ── FIELD 2: Username (letters only) ── */}
             <Field
               label="Username"
-              icon="👤"
+              icon="ID"
               placeholder="e.g. DanishSir  (letters only)"
               value={username}
               onChangeText={setUsername}
@@ -155,7 +157,7 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
             {/* ── FIELD 3: College Email ── */}
             <Field
               label="College Email"
-              icon="✉️"
+              icon="@"
               placeholder="yourname@rvu.edu.in"
               value={email}
               onChangeText={setEmail}
@@ -166,7 +168,7 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
             {/* ── FIELD 4: Phone ── */}
             <Field
               label="Mobile Number"
-              icon="📱"
+              icon="PH"
               placeholder="10-digit mobile number"
               value={phone}
               onChangeText={handlePhoneChange}
@@ -178,7 +180,7 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
             {/* ── FIELD 5: Password ── */}
             <Field
               label="Password"
-              icon="🔒"
+              icon="PW"
               placeholder="Choose a password"
               value={password}
               onChangeText={setPassword}
@@ -186,7 +188,7 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
               secureTextEntry={!showPass}
               rightElement={
                 <TouchableOpacity onPress={() => setShowPass(!showPass)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                  <Text style={styles.eyeIcon}>{showPass ? "👁️" : "👁️‍🗨️"}</Text>
+                  <Text style={styles.eyeIcon}>{showPass ? "Hide" : "Show"}</Text>
                 </TouchableOpacity>
               }
             />
@@ -194,7 +196,7 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
             {/* ── FIELD 6: Confirm Password ── */}
             <Field
               label="Confirm Password"
-              icon="🔑"
+              icon="OK"
               placeholder="Re-enter your password"
               value={confirm}
               onChangeText={setConfirm}
@@ -204,7 +206,7 @@ export default function CreateNewScreen({ navigation }: { navigation: any }) {
               onSubmitEditing={handleRegister}
               rightElement={
                 <TouchableOpacity onPress={() => setShowConf(!showConf)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                  <Text style={styles.eyeIcon}>{showConf ? "👁️" : "👁️‍🗨️"}</Text>
+                  <Text style={styles.eyeIcon}>{showConf ? "Hide" : "Show"}</Text>
                 </TouchableOpacity>
               }
             />
@@ -244,14 +246,16 @@ const TEAL = "#8BBDB3";
 const DARK = "#1e2235";
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: TEAL },
+  container: { flex: 1, backgroundColor: "#0F1A2E" },
   kbView:    { flex: 1 },
   scroll:    { flexGrow: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 16, paddingVertical: 28 },
 
   card: {
     width: "100%",
     maxWidth: 460,
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(255,255,255,0.16)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.32)",
     borderRadius: 35,
     padding: 30,
     shadowColor: "#000",
@@ -263,18 +267,18 @@ const styles = StyleSheet.create({
   cardCompact: { borderRadius: 28, padding: 22 },
 
   backBtn:  { flexDirection: "row", alignItems: "center", marginBottom: 20 },
-  backArrow: { fontSize: 26, color: TEAL, fontWeight: "300", marginRight: 4, lineHeight: 30 },
-  backText:  { fontSize: 14, color: TEAL, fontWeight: "600" },
+  backArrow: { fontSize: 26, color: "#EAF6FF", fontWeight: "300", marginRight: 4, lineHeight: 30 },
+  backText:  { fontSize: 14, color: "#EAF6FF", fontWeight: "600" },
 
-  title:    { fontSize: 28, fontWeight: "800", color: "#222", marginBottom: 6 },
-  subtitle: { fontSize: 14, color: "#777", marginBottom: 24 },
+  title:    { fontSize: 28, fontWeight: "800", color: "#F7FAFF", marginBottom: 6 },
+  subtitle: { fontSize: 14, color: "rgba(247,250,255,0.84)", marginBottom: 24 },
 
-  label: { fontSize: 13, fontWeight: "700", color: "#444", marginBottom: 6, marginLeft: 2 },
+  label: { fontSize: 13, fontWeight: "700", color: "#EAF6FF", marginBottom: 6, marginLeft: 2 },
 
   inputBox: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "rgba(255,255,255,0.14)",
     borderRadius: 14,
     paddingHorizontal: 16,
     paddingVertical: 14,
@@ -282,14 +286,16 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: "transparent",
   },
-  inputFocused: { borderColor: TEAL, backgroundColor: "#fff" },
+  inputFocused: { borderColor: "rgba(185,230,255,0.9)", backgroundColor: "rgba(255,255,255,0.24)" },
 
-  icon:      { fontSize: 16, marginRight: 10 },
-  input:     { flex: 1, fontSize: 15, color: "#333" },
-  eyeIcon:   { fontSize: 18, marginLeft: 6 },
+  icon:      { fontSize: 12, marginRight: 10, fontWeight: "800", color: "#EAF6FF" },
+  input:     { flex: 1, fontSize: 15, color: "#fff" },
+  eyeIcon:   { fontSize: 12, marginLeft: 6, color: "#EAF6FF", fontWeight: "700" },
 
   registerBtn: {
-    backgroundColor: DARK,
+    backgroundColor: "rgba(255,255,255,0.24)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.45)",
     paddingVertical: 16,
     borderRadius: 14,
     alignItems: "center",
@@ -301,9 +307,9 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   btnDisabled:    { opacity: 0.6 },
-  registerText:   { color: "#fff", fontWeight: "700", fontSize: 16 },
+  registerText:   { color: "#F7FAFF", fontWeight: "700", fontSize: 16 },
 
   loginRow:    { marginTop: 20, alignItems: "center" },
-  loginPrompt: { fontSize: 14, color: "#888" },
-  loginLink:   { color: TEAL, fontWeight: "700" },
+  loginPrompt: { fontSize: 14, color: "rgba(247,250,255,0.86)" },
+  loginLink:   { color: "#E5F5FF", fontWeight: "700" },
 });

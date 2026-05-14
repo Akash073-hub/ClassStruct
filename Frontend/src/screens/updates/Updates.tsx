@@ -10,11 +10,12 @@ import {
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "../../../App";
+import GlassBackdrop from "../../components/GlassBackdrop";
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Updates">;
 
-const BLUE = "#2F52E0";
-const DARK = "#1A1A2E";
+const BLUE = "#86D2FF";
+const DARK = "#F7FAFF";
 
 const UPDATES = [
   {
@@ -62,7 +63,8 @@ const UPDATES = [
 export default function UpdatesScreen({ navigation }: Props) {
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F4F6FB" />
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+      <GlassBackdrop />
 
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
@@ -116,7 +118,7 @@ export default function UpdatesScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#F4F6FB" },
+  safe: { flex: 1, backgroundColor: "#0F1A2E" },
   scroll: { flex: 1 },
   content: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 20 },
   header: {
@@ -125,14 +127,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: "#F4F6FB",
+    backgroundColor: "transparent",
   },
   backBtn: { width: 38, height: 38, justifyContent: "center", alignItems: "center" },
   backArrow: { fontSize: 32, color: DARK, lineHeight: 36, fontWeight: "300" },
   headerTitle: { fontSize: 20, fontWeight: "800", color: DARK },
   headerSpacer: { width: 38 },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(255,255,255,0.18)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.28)",
     borderRadius: 20,
     padding: 14,
     marginBottom: 14,
@@ -154,23 +158,23 @@ const styles = StyleSheet.create({
   iconText: { fontSize: 12, fontWeight: "900", color: DARK },
   cardBody: { flex: 1 },
   cardTitle: { fontSize: 15, fontWeight: "800", color: DARK, marginBottom: 4 },
-  cardMessage: { fontSize: 13, color: "#666", lineHeight: 18, marginBottom: 8 },
-  cardTime: { fontSize: 12, color: "#9A9A9A", fontWeight: "600" },
+  cardMessage: { fontSize: 13, color: "rgba(247,250,255,0.84)", lineHeight: 18, marginBottom: 8 },
+  cardTime: { fontSize: 12, color: "rgba(247,250,255,0.78)", fontWeight: "600" },
   bottomSpacer: { height: 20 },
   bottomNav: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(16,28,44,0.6)",
     paddingTop: 10,
     paddingBottom: 14,
     borderTopWidth: 1,
-    borderTopColor: "#EEE",
+    borderTopColor: "rgba(255,255,255,0.16)",
     elevation: 10,
   },
   navItem: { alignItems: "center", flex: 1 },
-  navIcon: { fontSize: 11, marginBottom: 3, opacity: 0.45, fontWeight: "900" },
-  navIconActive: { fontSize: 11, marginBottom: 3, fontWeight: "900", color: BLUE },
-  navLabel: { fontSize: 11, color: "#ADADAD", fontWeight: "500" },
-  navLabelActive: { fontSize: 11, color: BLUE, fontWeight: "700" },
+  navIcon: { fontSize: 11, marginBottom: 3, opacity: 0.8, fontWeight: "900", color: "rgba(255,255,255,0.86)" },
+  navIconActive: { fontSize: 11, marginBottom: 3, fontWeight: "900", color: "#EAF6FF" },
+  navLabel: { fontSize: 11, color: "rgba(255,255,255,0.82)", fontWeight: "500" },
+  navLabelActive: { fontSize: 11, color: "#EAF6FF", fontWeight: "700" },
 });
